@@ -159,7 +159,7 @@ details.ref>div{padding:4px 14px 14px;display:flex;flex-direction:column;gap:10p
 .step .ask{font-weight:700;font-size:.95rem}
 .step .eg{font-family:var(--serif);font-size:.95rem;color:var(--ink2)}
 .step:not(:last-child)::after{content:"→";position:absolute;right:-19px;top:50%;transform:translateY(-50%);font-weight:800;color:var(--pen);font-size:1.1rem}
-.step.what{border-top:4px solid var(--c-tone)} .step.how{border-top:4px solid var(--c-lang)} .step.why{border-top:4px solid var(--c-evid)} .step.so{border-top:4px solid var(--c-appeal)}
+.step.what{border-top:5px solid var(--c-lang)} .step.how{border-top:5px solid var(--c-evid)} .step.why{border-top:5px solid var(--c-struct)} .step.so{border-top:5px solid var(--c-appeal)}
 @media (max-width:700px){
   .flow{grid-template-columns:1fr}
   .step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-23px;transform:translateX(-50%)}
@@ -172,6 +172,62 @@ th{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--in
 .bank span{border:1.5px solid var(--line);border-radius:4px;padding:2px 8px;font-size:.92rem;background:var(--card)}
 footer{font-size:.82rem;color:var(--ink2);border-top:1px solid var(--line);padding-top:12px}
 @media (prefers-reduced-motion:no-preference){ .bar i{transition:width .25s} }
+
+/* ---- worked example ---- */
+:root{--k-what:var(--c-lang);--k-how:var(--c-evid);--k-why:var(--c-struct);--k-so:var(--c-appeal)}
+.k-what{background:var(--k-what);color:var(--c-fg)} .k-how{background:var(--k-how);color:var(--c-fg)}
+.k-why{background:var(--k-why);color:var(--c-fg)} .k-so{background:var(--k-so);color:var(--c-fg)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:.88rem}
+.legend b{display:inline-block;padding:1px 8px;border-radius:3px;margin-right:4px}
+a{color:var(--pen)}
+.ex-doc{border:1.5px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0;background:var(--card)}
+.ex-doc.art{background:var(--clip)}
+.ex-doc h3{font-size:1.2rem;font-weight:800}
+.ex-doc.art .ex-sec p{font-family:var(--serif);font-size:1.04rem}
+.ex-doc.art .ex-sec.plain p{font-family:var(--body);font-size:.95rem}
+.ex-sec,.ex-par{padding:6px 8px;border:1.5px solid transparent;border-radius:4px;display:flex;flex-direction:column;gap:2px}
+.ex-sec[role="button"],.ex-par[role="button"]{cursor:pointer}
+.ex-sec[role="button"]:hover,.ex-par[role="button"]:hover{border-color:var(--line)}
+.ex-sec.is-on,.ex-par.is-on{border-color:var(--pen);background:var(--pen-soft)}
+.ex-note{font-size:.84rem;color:var(--ink2);font-family:var(--body)}
+.ex-par p{overflow-wrap:anywhere}
+.ex-par span[class^="k-"],.sg{padding:.05em .12em;border-radius:2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.ph{background:var(--mark);color:var(--mark-ink);border-bottom:2px solid var(--pen);padding:0 .15em;cursor:pointer;border-radius:2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.ph.is-sel{outline:2.5px solid var(--pen);outline-offset:1px}
+.ph.is-done{background:var(--ok-bg);color:var(--ink);border-bottom-color:var(--ok);cursor:default}
+.ex-q{background:var(--card);border:1.5px solid var(--pen);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px;margin:4px 0;font-family:var(--body)}
+.sg{background:var(--pen-soft);border-bottom:2px dotted var(--pen);cursor:pointer}
+.sg.is-sel{outline:2.5px solid var(--pen);outline-offset:1px;background:var(--mark);color:var(--mark-ink)}
+.sg.is-done{border-bottom-color:transparent;cursor:default}
+.pick{position:sticky;bottom:0;z-index:2;background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;box-shadow:0 -6px 14px -10px rgba(0,0,0,.35)}
+.kbtn{border:1.5px solid transparent;border-radius:6px;padding:8px 16px;font-family:var(--display);font-weight:800;font-size:1rem}
+.kbtn:disabled{opacity:.45;cursor:default}
+.kbtn:not(:disabled):hover{border-color:var(--ink)}
+.pick-msg{font-size:.95rem;min-height:1.5em}
+.pick-msg.ok{color:var(--ok);font-weight:700} .pick-msg.no{color:var(--no);font-weight:700}
+.sbl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.sb{display:flex;gap:8px;align-items:flex-start;background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:10px;cursor:grab;-webkit-user-select:none;user-select:none}
+.sb.dragging{opacity:.8;border-color:var(--pen);cursor:grabbing;position:relative;z-index:3;box-shadow:0 6px 16px -8px rgba(0,0,0,.5)}
+.sb.drop-above{box-shadow:0 -4px 0 -1px var(--pen)} .sb.drop-below{box-shadow:0 4px 0 -1px var(--pen)}
+.sb.right{border-color:var(--ok);background:var(--ok-bg)} .sb.wrong{border-color:var(--no);background:var(--no-bg)}
+.grip{touch-action:none;cursor:grab;font-size:1.25rem;line-height:1.2;padding:2px 4px;color:var(--ink2);flex:0 0 auto}
+.sb .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.sb .roles{display:flex;gap:4px;flex-wrap:wrap}
+.sb .roles b{font-size:.74rem;padding:0 6px;border-radius:3px}
+.mv{display:flex;flex-direction:column;gap:4px;flex:0 0 auto}
+.mv button{border:1.5px solid var(--line);background:var(--card);border-radius:4px;width:2.1em;height:2.1em;font-weight:800;line-height:1}
+.mv button:hover{border-color:var(--pen)}
+
+.stepbox{border:2px solid var(--pen);background:var(--pen-soft);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.stepbox.done{border-width:1.5px;border-color:var(--line);background:var(--card);flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:10px 14px}
+.steph{font-size:1.35rem;font-weight:800}
+.stepbox .clip{background:var(--card)}
+a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
+a.btn.primary{color:var(--pen-ink)}
+.todo{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:3px}
+.phl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.phl .ex-sec>p{font-family:var(--serif);font-size:1.08rem}
+.phl .ex-note{font-size:.84rem}
 </style>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -197,6 +253,7 @@ footer{font-size:.82rem;color:var(--ink2);border-top:1px solid var(--line);paddi
       <button class="tab" role="tab" data-tab="type">Text type</button>
       <button class="tab" role="tab" data-tab="values">Values</button>
       <button class="tab" role="tab" data-tab="tone">Tone</button>
+      <button class="tab" role="tab" data-tab="example">Worked example</button>
       <button class="tab" role="tab" data-tab="guide">Task guide</button>
     </div>
   </nav>
@@ -262,6 +319,22 @@ footer{font-size:.82rem;color:var(--ink2);border-top:1px solid var(--line);paddi
     <section class="panel" id="p-tone" role="tabpanel" hidden>
       <div class="panel-head"><h2>Tone in vocabulary choices</h2><p class="sub">Tone is the writer’s attitude, and it shows in the words they choose. Name the tone, then find the words that create it.</p></div>
       <div class="controls"></div><div class="stage" aria-live="polite"></div>
+    </section>
+
+    <!-- Worked example -->
+    <section class="panel" id="p-example" role="tabpanel" hidden>
+      <div class="panel-head"><h2>Worked example</h2><p class="sub">One editorial and a full sample analysis of it. Do your own reading first, then study the sample.</p></div>
+      <div id="ex-step1"></div>
+      <div id="ex-step2" class="panel" hidden>
+        <div class="panel-head"><p class="eyebrow">Step 2</p><h3 class="steph">Study the sample analysis</h3></div>
+        <div class="controls">
+          <div class="ctl"><span class="ctl-label">Activity</span>
+            <span class="seg" id="ex-mode"><button data-v="read" aria-pressed="true">Read</button><button data-v="match" aria-pressed="false">Match the analysis</button><button data-v="label" aria-pressed="false">What, How, Why, So</button><button data-v="build" aria-pressed="false">Build a paragraph</button></span>
+          </div>
+          <div class="ctl" id="ex-pars" hidden><span class="ctl-label">Paragraph</span><span class="seg" id="ex-par"></span></div>
+        </div>
+        <div id="ex-area" class="panel"></div>
+      </div>
     </section>
 
     <!-- Task guide -->
@@ -356,6 +429,12 @@ footer{font-size:.82rem;color:var(--ink2);border-top:1px solid var(--line);paddi
           <tr><td>“fair share of tax”</td><td>Justice</td><td>Anger</td></tr>
           <tr><td>“breathing space”</td><td>Relief</td><td>Hope</td></tr>
         </table></div>
+      </div>
+
+      <div class="box">
+        <h3>Verbs for what the writer does</h3>
+        <div class="bank"><span>constructs</span><span>positions</span><span>reframes</span><span>escalates</span><span>reinforces</span><span>legitimises</span><span>amplifies</span><span>consolidates</span><span>juxtaposes</span><span>intensifies</span></div>
+        <p>Use these in place of “says”, “talks about” and “tells us”.</p>
       </div>
 
       <div class="box">
@@ -1641,6 +1720,409 @@ const TONEC = [
   { src: "pm", words: ["do their bit", "simple ways that you can", "Enjoy your Easter"], a: "encouraging", d: ["scathing", "alarmed", "formal"],
     why: "The phrases urge listeners on in a positive, supportive way." }
 ];
+
+/* ---------- Worked example: The Nightly editorial and the class exemplar essay ---------- */
+/* The article itself is not reproduced. Students read it at the link (or in the article pack) before the analysis.
+   phrases: short quotations the exemplar analyses, in the order they appear in the editorial. */
+const EX_ARTICLE = {
+  title: "Wider plan on fuel crisis needed to limit damage",
+  meta: "Editorial · The Nightly · 12 March 2026",
+  url: "https://thenightly.com.au/opinion/editorial/editorial-wider-plan-on-fuel-crisis-needed-to-limit-damage--c-21919148",
+  phrases: [
+    { id: "m5", ph: "“We need real action on the fuel crisis.”", where: "image caption" },
+    { id: "m1", ph: "“very great uncertainty”" },
+    { id: "m3", ph: "“The crisis has us over a barrel.”" },
+    { id: "m4", ph: "“on the other side of the world”" },
+    { id: "m2", ph: "“our economy into chaos”" },
+    { id: "m7", ph: "“running dry”" },
+    { id: "m8", ph: "“just the tip of the iceberg”" },
+    { id: "m6", ph: "“will start to look bare of fruit and vegies”" },
+    { id: "m9", ph: "“Already economists are warning”" },
+    { id: "m10", ph: "“inflation is set to soar”" },
+    { id: "m11", ph: "“possibly as soon as next week”" },
+    { id: "m12", ph: "“substantial”" },
+    { id: "m15", ph: "“fuel crisis turn into an economic crisis”" },
+    { id: "m13", ph: "“piecemeal”" },
+    { id: "m14", ph: "“needs to get on the front foot”" }
+  ]
+};
+
+/* Matching activity: phrase id -> the analysis that fits (wording from the exemplar, shortened), and the full exemplar sentence. */
+const EX_MATCH = {
+  m1: { a: "Establishes an atmosphere of instability and unpredictability, encouraging readers to perceive the crisis as extending far beyond temporary inconvenience.",
+        full: "Through the loaded phrase “very great uncertainty,” the article establishes an atmosphere of instability and unpredictability, encouraging readers to perceive the crisis as extending far beyond temporary inconvenience." },
+  m2: { a: "The hyperbolic connotations of one word heighten anxieties surrounding widespread disruption and loss of control.",
+        full: "This concern is further amplified through the assertion that the conflict could throw Australia’s “economy into chaos,” with the hyperbolic connotations of “chaos” heightening anxieties surrounding widespread disruption and loss of control." },
+  m3: { a: "The metaphor symbolically reinforces the nation’s vulnerability and dependence on overseas oil supplies.",
+        full: "Furthermore, the metaphor that the crisis has Australia “over a barrel” symbolically reinforces the nation’s vulnerability and dependence on overseas oil supplies." },
+  m4: { a: "Highlights the absurdity that so distant a war could so rapidly destabilise Australia, implicitly criticising the nation’s lack of preparedness.",
+        full: "Importantly, the article also highlights the absurdity that a war “on the other side of the world” could so rapidly destabilise Australia, implicitly criticising the nation’s lack of preparedness and positioning readers to view preventative planning as both logical and overdue." },
+  m5: { a: "One adjective carries critical connotations, implying that current government responses are inadequate and merely superficial.", not: ["m13"],
+        full: "The adjective “real” carries critical connotations, implying that current government responses are inadequate and merely superficial." },
+  m6: { a: "The adjective evokes scarcity and deprivation, encouraging readers to imagine disruptions to everyday necessities.", not: ["m7"],
+        full: "The adjective “bare” evokes scarcity and deprivation, encouraging readers to imagine disruptions to everyday necessities and thereby broadening concern beyond petrol prices alone." },
+  m7: { a: "Appeals particularly to Australian readers who value rural productivity and national food security.", not: ["m6"],
+        full: "Simultaneously, the image of regional farmers “running dry” appeals particularly to Australian readers who value rural productivity and national food security, positioning the shortages as a threat to the country’s economic and social stability." },
+  m8: { a: "The metaphor suggests that current shortages represent only a small fraction of a much larger impending crisis.",
+        full: "This anxiety is further escalated through the metaphor “tip of the iceberg,” which suggests that current shortages represent only a small fraction of a much larger impending crisis." },
+  m9: { a: "Positions the article’s concerns as credible, evidence-based and financially informed rather than alarmist speculation.",
+        full: "References to “economists,” “Treasury,” and the Reserve Bank of Australia position the article’s concerns as credible, evidence-based and financially informed rather than alarmist speculation." },
+  m10: { a: "The verb conveys a rapid and uncontrollable escalation in living costs.",
+        full: "In particular, the assertion that “inflation is set to soar” intensifies fears surrounding economic instability, while the verb “soar” conveys a rapid and uncontrollable escalation in living costs." },
+  m11: { a: "Creates urgency and encourages readers to view the crisis as immediate rather than hypothetical.",
+        full: "This warning is reinforced through the prediction that interest rates may rise “as soon as next week,” creating urgency and encouraging readers to view the crisis as immediate rather than hypothetical." },
+  m12: { a: "Functions as a concession from within government itself, validating the editorial’s concerns through official recognition.",
+        full: "Additionally, Treasurer Jim Chalmers’ acknowledgement that the economic consequences could be “substantial” strategically functions as a concession from within government itself, validating the editorial’s concerns through official recognition." },
+  m13: { a: "The dismissive connotations position the Government’s actions as fragmented, reactive and ultimately insufficient.", not: ["m5"],
+        full: "The dismissive connotations of this term position the Government’s actions as fragmented, reactive and ultimately insufficient for a crisis of national significance." },
+  m14: { a: "The imperative conveys urgency while pressuring leaders to adopt a more proactive and comprehensive strategy.",
+        full: "This criticism is sharpened through the imperative assertion that the Government “needs to get on the front foot,” which conveys urgency while pressuring leaders to adopt a more proactive and comprehensive strategy." },
+  m15: { a: "Strategically broadens the issue from fuel shortages to nationwide financial instability.",
+        full: "Importantly, the editorial concludes by warning that Australia risks seeing the “fuel crisis turn into an economic crisis,” strategically broadening the issue from fuel shortages to nationwide financial instability." }
+};
+
+/* Exemplar essay. Each paragraph is a list of sentences; each sentence is a list of parts [role, text].
+   Roles: w = What, h = How, y = Why, s = So, "" = not labelled. */
+const EX_INTRO = "Published in The Nightly on 12 March 2026, the editorial “Wider plan on fuel crisis needed to limit damage” responds to escalating fears surrounding fuel shortages and economic instability caused by conflict in the Middle East. Writing for an audience of politically engaged Australians who value economic security and competent leadership, the editorial argues that the Federal Government’s response to the developing fuel crisis has been inadequate and that broader national planning is urgently required. Throughout the piece, the editorial progressively intensifies fears surrounding shortages, inflation and economic disruption in order to pressure both readers and the Government toward stronger intervention and long-term preparation.";
+const EX_PARAS = [
+  { id: "p1", label: "Opening", s: [
+    [["w", "The editorial strategically opens by framing the fuel crisis as a profound threat to national stability,"], ["s", "immediately positioning readers to view the situation with alarm."]],
+    [["h", "Through the loaded phrase “very great uncertainty,”"], ["y", "the article establishes an atmosphere of instability and unpredictability,"], ["s", "encouraging readers to perceive the crisis as extending far beyond temporary inconvenience."]],
+    [["h", "This concern is further amplified through the assertion that the conflict could throw Australia’s “economy into chaos,” with the hyperbolic connotations of “chaos”"], ["s", "heightening anxieties surrounding widespread disruption and loss of control."]],
+    [["h", "Furthermore, the metaphor that the crisis has Australia “over a barrel”"], ["y", "symbolically reinforces the nation’s vulnerability and dependence on overseas oil supplies."]],
+    [["s", "By presenting Australia as trapped and powerless within global markets, the editorial legitimises public anxiety while simultaneously implying that stronger governmental planning is necessary to regain control."]],
+    [["h", "Importantly, the article also highlights the absurdity that a war “on the other side of the world” could so rapidly destabilise Australia,"], ["y", "implicitly criticising the nation’s lack of preparedness"], ["s", "and positioning readers to view preventative planning as both logical and overdue."]]
+  ] },
+  { id: "p2", label: "Image", s: [
+    [["w", "Accompanying the editorial, the visual reinforces the article’s central argument that stronger government intervention is urgently required."]],
+    [["h", "The image features a petrol pump nozzle positioned prominently beside the bold statement, “We need real action on the fuel crisis.”"]],
+    [["h", "By directly linking the fuel nozzle to the call for “real action,”"], ["y", "the visual simplifies the issue into an immediate and recognisable national concern."]],
+    [["h", "The adjective “real” carries critical connotations,"], ["y", "implying that current government responses are inadequate and merely superficial."]],
+    [["s", "This encourages readers to view existing measures as insufficient and to support stronger, more comprehensive intervention."]],
+    [["h", "Furthermore, the fuel nozzle serves as a symbolic representation of Australia’s dependence on fuel supplies,"], ["y", "visually reinforcing the editorial’s warnings about shortages, rising prices and economic vulnerability."]],
+    [["h", "The simple, uncluttered design"], ["s", "ensures that readers focus on the central message, increasing the urgency of the call for action and strengthening the editorial’s criticism of the Government’s “piecemeal” response to the crisis."]]
+  ] },
+  { id: "p3", label: "Consequences", s: [
+    [["w", "Having established instability, the editorial intensifies its argument by outlining the direct consequences fuel shortages may have on ordinary Australians."]],
+    [["h", "Through hypothetical scenarios involving supermarket shelves looking “bare of fruit and vegies” and farmers “running dry,”"], ["y", "the article personalises the broader economic crisis and translates abstract geopolitical conflict into immediate domestic fears."]],
+    [["h", "The adjective “bare” evokes scarcity and deprivation,"], ["s", "encouraging readers to imagine disruptions to everyday necessities and thereby broadening concern beyond petrol prices alone."]],
+    [["h", "Simultaneously, the image of regional farmers “running dry”"], ["y", "appeals particularly to Australian readers who value rural productivity and national food security,"], ["s", "positioning the shortages as a threat to the country’s economic and social stability."]],
+    [["h", "This anxiety is further escalated through the metaphor “tip of the iceberg,”"], ["y", "which suggests that current shortages represent only a small fraction of a much larger impending crisis."]],
+    [["s", "By implying that conditions will continue deteriorating unless stronger action is taken, the editorial strategically pressures readers to support broader intervention before the situation worsens."]],
+    [["", "The cumulative effect of these examples is to transform the fuel crisis from an isolated economic issue into a threat capable of disrupting all aspects of daily Australian life."]]
+  ] },
+  { id: "p4", label: "Experts", s: [
+    [["w", "The editorial further strengthens its warnings through sustained appeals to institutional authority and expert evidence, thereby legitimising its criticism of the Government’s response."]],
+    [["h", "References to “economists,” “Treasury,” and the Reserve Bank of Australia"], ["y", "position the article’s concerns as credible, evidence-based and financially informed rather than alarmist speculation."]],
+    [["h", "In particular, the assertion that “inflation is set to soar”"], ["", "intensifies fears surrounding economic instability,"], ["h", "while the verb “soar”"], ["y", "conveys a rapid and uncontrollable escalation in living costs."]],
+    [["h", "This warning is reinforced through the prediction that interest rates may rise “as soon as next week,”"], ["s", "creating urgency and encouraging readers to view the crisis as immediate rather than hypothetical."]],
+    [["h", "Additionally, Treasurer Jim Chalmers’ acknowledgement that the economic consequences could be “substantial”"], ["y", "strategically functions as a concession from within government itself, validating the editorial’s concerns through official recognition."]],
+    [["s", "By incorporating governmental and economic authorities into its argument, the editorial presents its position as measured and rational, thereby increasing pressure on readers to accept that broader planning is economically necessary and politically responsible."]]
+  ] },
+  { id: "p5", label: "Conclusion", s: [
+    [["w", "In its concluding section, the editorial shifts toward direct criticism of the Government’s handling of the crisis in order to leave readers dissatisfied with current leadership and supportive of stronger intervention."]],
+    [["h", "While acknowledging temporary measures such as lowering fuel quality standards and increasing monitoring of petrol prices, the article dismisses these responses as “piecemeal.”"]],
+    [["y", "The dismissive connotations of this term position the Government’s actions as fragmented, reactive and ultimately insufficient for a crisis of national significance."]],
+    [["h", "This criticism is sharpened through the imperative assertion that the Government “needs to get on the front foot,”"], ["y", "which conveys urgency while pressuring leaders to adopt a more proactive and comprehensive strategy."]],
+    [["h", "Importantly, the editorial concludes by warning that Australia risks seeing the “fuel crisis turn into an economic crisis,”"], ["y", "strategically broadening the issue from fuel shortages to nationwide financial instability."]],
+    [["s", "Ending on this ominous prediction leaves readers with a heightened sense of vulnerability and reinforces the editorial’s central contention that immediate, coordinated national planning is both urgent and unavoidable."]]
+  ] }
+];
+/* The shorter model paragraph from the lesson slides: a good first one to try. */
+const EX_SHORT = { id: "p0", label: "Short model", s: [
+  [["w", "After establishing global instability, the editorial intensifies concern by outlining the consequences fuel shortages could have on everyday Australian life."]],
+  [["h", "Through hypothetical scenarios such as supermarket shelves looking “bare” and regional communities “running dry,”"], ["y", "the article personalises the crisis and positions shortages as a threat to basic survival and economic stability."]],
+  [["h", "Furthermore, the metaphor “tip of the iceberg”"], ["y", "escalates anxiety by implying that current disruptions represent only the beginning of much larger national problems."]],
+  [["s", "This progression from global conflict to domestic hardship broadens readers’ fears beyond rising petrol prices and encourages audiences to view wider government intervention as urgently necessary."]]
+] };
+
+/* =================== Worked example page =================== */
+window.AADExample = (function () {
+  "use strict";
+  var $ = function (s, el) { return (el || document).querySelector(s); };
+  var $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var shuffle = function (a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+  var K = {
+    w: { n: "What", c: "k-what", rule: "It names the argument the writer is making at this point." },
+    h: { n: "How", c: "k-how", rule: "It quotes the writer’s words or names the technique." },
+    y: { n: "Why", c: "k-why", rule: "It explains how those words support the argument." },
+    s: { n: "So", c: "k-so", rule: "It says what the audience is meant to think, feel or do." }
+  };
+  var ORDER = ["w", "h", "y", "s"];
+  var PARAS = [EX_SHORT].concat(EX_PARAS);
+  var area, mode = "read", parId = "p0", started = false, unlocked = false;
+  try { unlocked = localStorage.getItem("aad.exRead") === "1"; } catch (e) {}
+  var st = { match: { done: {}, first: 0, tries: {} }, label: {}, build: {}, colour: false };
+
+  function legend() {
+    return '<div class="legend">' + ORDER.map(function (k) { return '<span><b class="' + K[k].c + '">' + K[k].n + "</b>" + esc(K[k].rule.replace(/^It /, "").replace(/\.$/, "")) + "</span>"; }).join("") + "</div>";
+  }
+  function onActivate(el, fn) {
+    el.addEventListener("click", fn);
+    el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn(e); } });
+  }
+  function paraHTML(p, coloured) {
+    return p.s.map(function (sen) {
+      return sen.map(function (x) { return coloured && x[0] ? '<span class="' + K[x[0]].c + '">' + esc(x[1]) + "</span>" : esc(x[1]); }).join(" ");
+    }).join(" ");
+  }
+
+  /* ---------- Step 1: read the article first ---------- */
+  function renderStep1() {
+    var a = EX_ARTICLE, box = $("#ex-step1");
+    if (unlocked) {
+      box.innerHTML = '<div class="stepbox done"><p><strong>Step 1 done.</strong> You have read and annotated “' + esc(a.title) + '”.</p>' +
+        '<a class="btn" href="' + a.url + '" target="_blank" rel="noopener">Open the article again</a></div>';
+      return;
+    }
+    box.innerHTML =
+      '<div class="stepbox"><p class="eyebrow">Step 1 · Do this first</p><h3 class="steph">Read and analyse the article yourself</h3>' +
+      '<p>Read the editorial and annotate it <strong>before</strong> you look at the sample analysis.</p>' +
+      '<div class="clip plain"><blockquote><strong>' + esc(a.title) + '</strong></blockquote><figcaption>' + esc(a.meta) + '</figcaption></div>' +
+      '<div class="row"><a class="btn primary" href="' + a.url + '" target="_blank" rel="noopener">Open the article on The Nightly</a></div>' +
+      '<div><span class="lbl">As you read, note</span><ul class="todo">' +
+      '<li>the CDFASTCATP details for your introduction</li>' +
+      '<li>each main argument, in order, and where the tone changes</li>' +
+      '<li>the words and phrases chosen to persuade</li>' +
+      '<li>what the image adds to the argument</li></ul></div>' +
+      '<p class="ex-note">Use the website version. Its image, a fuel pump nozzle, is the one the sample analysis discusses. Your article pack (page 18) has the same text with a different image.</p>' +
+      '<div class="row"><button type="button" class="btn" id="ex-unlock">I have read and annotated the article. Show the sample analysis</button></div></div>';
+    $("#ex-unlock").addEventListener("click", function () {
+      unlocked = true;
+      try { localStorage.setItem("aad.exRead", "1"); } catch (e) {}
+      renderStep1(); $("#ex-step2").hidden = false; render();
+      $("#ex-step2").scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+  }
+
+  /* ---------- Read ---------- */
+  function renderRead() {
+    area.innerHTML =
+      '<div class="row spread"><p class="sub">Compare this with your own annotations. What did the writer notice that you did not?</p>' +
+      '<label class="check"><input type="checkbox" id="ex-colour"' + (st.colour ? " checked" : "") + "> Colour-code What, How, Why, So</label></div>" +
+      (st.colour ? legend() : "") +
+      '<article class="ex-doc"><p class="eyebrow">Sample analysis</p><h3>Exemplar essay</h3>' +
+      '<div class="ex-par"><span class="lbl">Introduction</span><p>' + esc(EX_INTRO) + "</p></div>" +
+      EX_PARAS.map(function (p, i) {
+        return '<div class="ex-par"><span class="lbl">Body ' + (i + 1) + " · " + esc(p.label) + "</span><p>" + paraHTML(p, st.colour) + "</p></div>";
+      }).join("") + "</article>";
+    $("#ex-colour").addEventListener("change", function (e) { st.colour = e.target.checked; renderRead(); });
+  }
+
+  /* ---------- Match the analysis ---------- */
+  function renderMatch() {
+    var ids = Object.keys(EX_MATCH), n = ids.filter(function (i) { return st.match.done[i]; }).length;
+    area.innerHTML =
+      '<p class="sub">These phrases are quoted from the editorial, in the order they appear. Click a phrase, then choose the analysis that fits it. The options use the wording of the sample analysis.</p>' +
+      '<div class="row spread"><span class="meta" id="ex-mcount"></span><button type="button" class="btn quiet" id="ex-mreset">Start again</button></div>' +
+      '<div class="bar"><i id="ex-mbar"></i></div>' +
+      '<div class="ex-doc art"><p class="eyebrow">Phrases from the editorial</p><ul class="phl">' +
+      EX_ARTICLE.phrases.map(function (x) {
+        return '<li class="ex-sec"><p><span class="ph' + (st.match.done[x.id] ? " is-done" : "") + '" role="button" tabindex="0" data-m="' + x.id + '">' + esc(x.ph) + "</span>" +
+          (x.where ? ' <span class="ex-note">(' + esc(x.where) + ")</span>" : "") + "</p></li>";
+      }).join("") + "</ul></div>";
+    function count() {
+      n = ids.filter(function (i) { return st.match.done[i]; }).length;
+      $("#ex-mcount").textContent = "Matched " + n + " of " + ids.length + (n ? " · right first time: " + st.match.first : "");
+      $("#ex-mbar").style.width = Math.round(100 * n / ids.length) + "%";
+    }
+    count();
+    $("#ex-mreset").addEventListener("click", function () { st.match = { done: {}, first: 0, tries: {} }; renderMatch(); });
+    $$(".ph", area).forEach(function (ph) {
+      onActivate(ph, function (e) {
+        e.stopPropagation();
+        var id = ph.getAttribute("data-m");
+        if (st.match.done[id]) return;
+        $$(".ph.is-sel", area).forEach(function (x) { x.classList.remove("is-sel"); });
+        ph.classList.add("is-sel");
+        var old = $(".ex-q", area); if (old) old.remove();
+        var m = EX_MATCH[id];
+        var wrong = shuffle(ids.filter(function (o) { return o !== id && (m.not || []).indexOf(o) < 0; })).slice(0, 3);
+        var opts = shuffle([id].concat(wrong));
+        var card = document.createElement("div"); card.className = "ex-q";
+        card.innerHTML = '<p class="q-prompt">Which analysis fits ' + ph.innerHTML + '?</p><div class="opts">' +
+          opts.map(function (o, i) { return '<button type="button" class="opt" data-o="' + o + '"><span class="key">' + "ABCD"[i] + '</span><span class="txt"><span>' + esc(EX_MATCH[o].a) + "</span></span></button>"; }).join("") +
+          '</div><div class="fb" hidden></div>';
+        ph.closest(".ex-sec").appendChild(card);
+        card.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        $$(".opt", card).forEach(function (b) {
+          b.addEventListener("click", function () {
+            var fb = $(".fb", card), pick = b.getAttribute("data-o");
+            if (pick === id) {
+              if (!st.match.tries[id]) st.match.first++;
+              st.match.done[id] = true;
+              $$(".opt", card).forEach(function (x) { x.disabled = true; if (x !== b) x.classList.add("is-dim"); });
+              b.classList.add("is-ok"); ph.classList.remove("is-sel"); ph.classList.add("is-done");
+              fb.className = "fb ok"; fb.hidden = false;
+              fb.innerHTML = '<p class="fb-head">Correct.</p><p><span class="lbl">In the sample analysis</span>' + esc(m.full) + "</p>";
+              count();
+              if (n === ids.length) fb.insertAdjacentHTML("beforeend", "<p><strong>All " + ids.length + " matched.</strong> Try “What, How, Why, So” next.</p>");
+            } else {
+              st.match.tries[id] = (st.match.tries[id] || 0) + 1;
+              b.disabled = true; b.classList.add("is-no");
+              fb.className = "fb no"; fb.hidden = false;
+              fb.innerHTML = '<p class="fb-head">Not quite.</p><p>That analysis belongs to a different phrase. Look at the technique it names and the feeling it describes, then try again.</p>';
+            }
+          });
+        });
+      });
+    });
+  }
+
+  /* ---------- What, How, Why, So ---------- */
+  function renderLabel() {
+    var p = PARAS.filter(function (x) { return x.id === parId; })[0];
+    var s = st.label[parId] || (st.label[parId] = { done: {}, first: 0, tries: {} });
+    var parts = [], html = p.s.map(function (sen) {
+      return sen.map(function (x) {
+        if (!x[0]) return esc(x[1]);
+        var i = parts.length; parts.push(x);
+        return s.done[i] ? '<span class="sg is-done ' + K[x[0]].c + '">' + esc(x[1]) + "</span>" : '<span class="sg" role="button" tabindex="0" data-i="' + i + '">' + esc(x[1]) + "</span>";
+      }).join(" ");
+    }).join(" ");
+    var total = parts.length, sel = null;
+    area.innerHTML =
+      '<p class="sub">Click a highlighted part of the paragraph, then decide what job it is doing.</p>' + legend() +
+      '<div class="ex-doc"><p class="eyebrow">Sample analysis · ' + esc(p.label) + '</p><p id="ex-lpar">' + html + "</p></div>" +
+      '<div class="pick"><div class="row spread"><div class="row">' + ORDER.map(function (k) { return '<button type="button" class="kbtn ' + K[k].c + '" data-k="' + k + '" disabled>' + K[k].n + "</button>"; }).join("") +
+      '</div><span class="meta" id="ex-lcount"></span></div><p class="pick-msg" id="ex-lmsg" aria-live="polite">Pick a highlighted part first.</p>' +
+      '<div class="row"><button type="button" class="btn quiet" id="ex-lreset">Clear this paragraph</button></div></div>';
+    function count() {
+      var n = Object.keys(s.done).length;
+      $("#ex-lcount").textContent = n + " of " + total + " labelled" + (n ? " · right first time: " + s.first : "");
+      return n;
+    }
+    count();
+    function setButtons(on) { $$(".kbtn", area).forEach(function (b) { b.disabled = !on; }); }
+    $$(".sg[role=button]", area).forEach(function (el) {
+      onActivate(el, function () {
+        if (el.classList.contains("is-done")) return;
+        $$(".sg.is-sel", area).forEach(function (x) { x.classList.remove("is-sel"); });
+        el.classList.add("is-sel"); sel = el; setButtons(true);
+        var m = $("#ex-lmsg"); m.className = "pick-msg"; m.textContent = "Is this part What, How, Why or So?";
+      });
+    });
+    $$(".kbtn", area).forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (!sel) return;
+        var i = +sel.getAttribute("data-i"), want = parts[i][0], got = b.getAttribute("data-k"), m = $("#ex-lmsg");
+        if (got === want) {
+          if (!s.tries[i]) s.first++;
+          s.done[i] = true;
+          sel.className = "sg is-done " + K[want].c; sel.removeAttribute("role"); sel.removeAttribute("tabindex");
+          sel = null; setButtons(false);
+          var n = count();
+          m.className = "pick-msg ok";
+          m.textContent = K[want].n + ". " + K[want].rule + (n === total ? " Paragraph complete: " + s.first + " of " + total + " right first time." : "");
+        } else {
+          s.tries[i] = (s.tries[i] || 0) + 1;
+          m.className = "pick-msg no";
+          m.textContent = "Not " + K[got].n + ". A " + K[got].n + " part does this: " + K[got].rule.replace(/^It /, "it ") + " Try again.";
+        }
+      });
+    });
+    $("#ex-lreset").addEventListener("click", function () { delete st.label[parId]; renderLabel(); });
+  }
+
+  /* ---------- Build a paragraph ---------- */
+  function renderBuild() {
+    var p = PARAS.filter(function (x) { return x.id === parId; })[0];
+    var s = st.build[parId];
+    if (!s) {
+      var ord = p.s.map(function (_, i) { return i; }), sh;
+      do { sh = shuffle(ord); } while (p.s.length > 1 && sh.every(function (v, i) { return v === i; }));
+      s = st.build[parId] = { order: sh, checks: 0, solved: false };
+    }
+    area.innerHTML =
+      '<p class="sub">These sentences make up one paragraph of the sample analysis. Drag them into the right order, or use the arrows. Start with What, then follow each How with its Why and So.</p>' +
+      '<ol class="sbl" id="ex-list">' + s.order.map(function (k) {
+        var roles = []; p.s[k].forEach(function (x) { if (x[0] && roles.indexOf(x[0]) < 0) roles.push(x[0]); });
+        return '<li class="sb" data-k="' + k + '"><span class="grip" aria-hidden="true">⠿</span><span class="tx"><span>' + esc(p.s[k].map(function (x) { return x[1]; }).join(" ")) + "</span>" +
+          '<span class="roles" hidden>' + roles.map(function (r) { return '<b class="' + K[r].c + '">' + K[r].n + "</b>"; }).join("") + "</span></span>" +
+          '<span class="mv"><button type="button" class="up" aria-label="Move up">↑</button><button type="button" class="dn" aria-label="Move down">↓</button></span></li>';
+      }).join("") + "</ol>" +
+      '<p class="pick-msg" id="ex-bmsg" aria-live="polite"></p>' +
+      '<div class="row"><button type="button" class="btn primary" id="ex-check">Check the order</button><button type="button" class="btn" id="ex-shuffle">Shuffle again</button><button type="button" class="btn quiet" id="ex-show">Show the answer</button></div>';
+    var list = $("#ex-list"), msg = $("#ex-bmsg"), drag = null;
+    function read() { s.order = $$(".sb", list).map(function (li) { return +li.getAttribute("data-k"); }); }
+    function clearMarks() { $$(".sb", list).forEach(function (li) { li.classList.remove("right", "wrong"); }); msg.textContent = ""; msg.className = "pick-msg"; }
+    function reveal() { $$(".roles", list).forEach(function (r) { r.hidden = false; }); }
+    list.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      var li = b.closest(".sb");
+      if (b.classList.contains("up") && li.previousElementSibling) list.insertBefore(li, li.previousElementSibling);
+      if (b.classList.contains("dn") && li.nextElementSibling) list.insertBefore(li.nextElementSibling, li);
+      b.focus(); read(); clearMarks();
+    });
+    /* Drag: the card follows the pointer and a line shows where it will land. The list is only reordered on release. */
+    var startY = 0, target = null;
+    function clearDrop() { $$(".sb", list).forEach(function (x) { x.classList.remove("drop-above", "drop-below"); }); }
+    function onMove(e) {
+      if (!drag) return;
+      e.preventDefault();
+      drag.style.transform = "translateY(" + (e.clientY - startY) + "px)";
+      var sibs = $$(".sb", list).filter(function (x) { return x !== drag; });
+      target = null;
+      for (var i = 0; i < sibs.length; i++) { var r = sibs[i].getBoundingClientRect(); if (e.clientY < r.top + r.height / 2) { target = sibs[i]; break; } }
+      clearDrop();
+      if (target) target.classList.add("drop-above"); else if (sibs.length) sibs[sibs.length - 1].classList.add("drop-below");
+    }
+    function onUp() {
+      if (!drag) return;
+      document.removeEventListener("pointermove", onMove); document.removeEventListener("pointerup", onUp); document.removeEventListener("pointercancel", onUp);
+      drag.style.transform = ""; drag.classList.remove("dragging"); clearDrop();
+      if (target !== drag.nextElementSibling) list.insertBefore(drag, target);
+      drag = null; read();
+    }
+    list.addEventListener("pointerdown", function (e) {
+      var li = e.target.closest(".sb"); if (!li || e.target.closest("button")) return;
+      if (e.pointerType !== "mouse" && !e.target.closest(".grip")) return;
+      e.preventDefault(); drag = li; startY = e.clientY; target = li.nextElementSibling; li.classList.add("dragging");
+      clearMarks();
+      document.addEventListener("pointermove", onMove, { passive: false }); document.addEventListener("pointerup", onUp); document.addEventListener("pointercancel", onUp);
+    });
+    $("#ex-check").addEventListener("click", function () {
+      read(); s.checks++;
+      var right = 0;
+      $$(".sb", list).forEach(function (li, i) { var ok = +li.getAttribute("data-k") === i; li.classList.toggle("right", ok); li.classList.toggle("wrong", !ok); if (ok) right++; });
+      if (right === s.order.length) { s.solved = true; reveal(); msg.className = "pick-msg ok"; msg.textContent = "Correct order. The labels show the job each sentence does."; }
+      else { msg.className = "pick-msg no"; msg.textContent = "In the right place: " + right + " of " + s.order.length + ". Green sentences can stay where they are."; }
+    });
+    $("#ex-shuffle").addEventListener("click", function () { delete st.build[parId]; renderBuild(); });
+    $("#ex-show").addEventListener("click", function () {
+      $$(".sb", list).sort(function (a, b) { return a.getAttribute("data-k") - b.getAttribute("data-k"); }).forEach(function (li) { list.appendChild(li); li.classList.remove("wrong"); li.classList.add("right"); });
+      read(); reveal(); msg.className = "pick-msg"; msg.textContent = "This is the order used in the sample analysis.";
+    });
+    if (s.solved) { reveal(); }
+  }
+
+  function render() {
+    $("#ex-pars").hidden = !(mode === "label" || mode === "build");
+    if (mode === "read") renderRead();
+    if (mode === "match") renderMatch();
+    if (mode === "label") renderLabel();
+    if (mode === "build") renderBuild();
+  }
+  function init() {
+    if (started) return; started = true;
+    area = $("#ex-area");
+    var modeSeg = $("#ex-mode"), parSeg = $("#ex-par");
+    parSeg.innerHTML = PARAS.map(function (p, i) { return '<button type="button" data-v="' + p.id + '" aria-pressed="' + (i === 0) + '">' + esc(p.label) + "</button>"; }).join("");
+    function wire(host, fn) {
+      $$("button", host).forEach(function (b) {
+        b.type = "button";
+        b.addEventListener("click", function () { $$("button", host).forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); fn(b.getAttribute("data-v")); });
+      });
+    }
+    wire(modeSeg, function (v) { mode = v; render(); });
+    wire(parSeg, function (v) { parId = v; render(); });
+    renderStep1();
+    $("#ex-step2").hidden = !unlocked;
+    if (unlocked) render();
+  }
+  return { init: init };
+})();
 (function () {
   "use strict";
   var $ = function (s, el) { return (el || document).querySelector(s); };
@@ -2051,7 +2533,7 @@ const TONEC = [
   };
 
   /* =================== Tabs =================== */
-  var TABS = ["flashcards", "definitions", "spot", "effect", "intro", "type", "values", "tone", "guide"];
+  var TABS = ["flashcards", "definitions", "spot", "effect", "intro", "type", "values", "tone", "example", "guide"];
   var quizCfg = { definitions: defCfg, spot: spotCfg, effect: effCfg, intro: introCfg, type: typeCfg, values: valCfg, tone: toneCfg };
   var quizzes = {}, current = "flashcards";
   function show(tab, focus) {
@@ -2060,6 +2542,7 @@ const TONEC = [
     TABS.forEach(function (t) { $("#p-" + t).hidden = t !== tab; });
     $$(".tab").forEach(function (b) { b.setAttribute("aria-selected", b.getAttribute("data-tab") === tab ? "true" : "false"); });
     if (quizCfg[tab] && !quizzes[tab]) quizzes[tab] = new Quiz($("#p-" + tab), quizCfg[tab]);
+    if (tab === "example" && window.AADExample) window.AADExample.init();
     save();
     if (focus) { try { history.replaceState(null, "", "#" + tab); } catch (e) {} }
   }
