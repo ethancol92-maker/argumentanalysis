@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Argument Analysis Drill</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: one narrow working column, like an annotated article. Blue pen for controls, highlighter colours for categories, red and green pen for marking. */
+:root{
+  --paper:#F2F3EE; --card:#FFFFFF; --clip:#F8F6EC; --ink:#18212B; --ink2:#4B5563; --line:#D3D7CF;
+  --pen:#1A4FA3; --pen-ink:#FFFFFF; --pen-soft:#E4ECF8;
+  --mark:#FFE566; --mark-ink:#18212B;
+  --ok:#1B7340; --ok-bg:#E1F2E6; --no:#B3261E; --no-bg:#FBE7E4;
+  --c-lang:#FFEFA0; --c-appeal:#FFD0DF; --c-evid:#CDECC8; --c-struct:#CCE0F8; --c-tone:#FFD9B8; --c-form:#E2D4F5; --c-fg:#18212B;
+  --display:'Bricolage Grotesque','Arial Narrow',system-ui,sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --serif:'Source Serif 4',Georgia,'Times New Roman',serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10151B; --card:#19202A; --clip:#202834; --ink:#E7EAEE; --ink2:#A6B0BC; --line:#303A48;
+    --pen:#8DBBF5; --pen-ink:#0E1620; --pen-soft:#1C2A3D;
+    --mark:#5C4D00; --mark-ink:#FFF1A8;
+    --ok:#6FD197; --ok-bg:#15301F; --no:#F2928A; --no-bg:#3A1A17;
+    --c-lang:#4D4200; --c-appeal:#55243A; --c-evid:#1F4424; --c-struct:#1D3A5C; --c-tone:#5A3410; --c-form:#3A2A5C; --c-fg:#F1F3F5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10151B; --card:#19202A; --clip:#202834; --ink:#E7EAEE; --ink2:#A6B0BC; --line:#303A48;
+  --pen:#8DBBF5; --pen-ink:#0E1620; --pen-soft:#1C2A3D;
+  --mark:#5C4D00; --mark-ink:#FFF1A8;
+  --ok:#6FD197; --ok-bg:#15301F; --no:#F2928A; --no-bg:#3A1A17;
+  --c-lang:#4D4200; --c-appeal:#55243A; --c-evid:#1F4424; --c-struct:#1D3A5C; --c-tone:#5A3410; --c-form:#3A2A5C; --c-fg:#F1F3F5;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;padding-inline:16px;padding-block:20px 56px}
+.wrap{max-width:820px;margin-inline:auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(1.7rem,5vw,2.3rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:1.35rem;font-weight:800}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+mark{background:var(--mark);color:var(--mark-ink);padding:0 .15em;border-radius:2px}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);font-weight:700}
+.sub{color:var(--ink2);max-width:60ch}
+
+/* header and navigation */
+.masthead{display:flex;flex-direction:column;gap:6px}
+nav{display:flex;flex-direction:column;gap:10px}
+.navgroup{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.navgroup .eyebrow{flex:0 0 100%}
+.tab{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;font-weight:600;font-size:.95rem}
+.tab:hover{border-color:var(--pen)}
+.tab[aria-selected="true"]{background:var(--pen);border-color:var(--pen);color:var(--pen-ink)}
+
+/* panels */
+.panel{display:flex;flex-direction:column;gap:16px}
+.panel-head{display:flex;flex-direction:column;gap:4px}
+.controls{display:flex;flex-direction:column;gap:10px;padding:12px 14px;border:1.5px dashed var(--line);border-radius:6px}
+.ctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ctl-label{font-size:.82rem;font-weight:700;color:var(--ink2);margin-right:4px;min-width:5.2em}
+.chip{border:1.5px solid transparent;border-radius:4px;padding:3px 9px;font-size:.86rem;font-weight:600;background:var(--pen-soft);color:var(--ink);display:inline-block}
+button.chip{opacity:.5;border-color:var(--line);background:transparent}
+button.chip[aria-pressed="true"]{opacity:1;border-color:transparent;background:var(--pen-soft)}
+.cat-lang,button.chip.cat-lang[aria-pressed="true"]{background:var(--c-lang);color:var(--c-fg)}
+.cat-appeal,button.chip.cat-appeal[aria-pressed="true"]{background:var(--c-appeal);color:var(--c-fg)}
+.cat-evid,button.chip.cat-evid[aria-pressed="true"]{background:var(--c-evid);color:var(--c-fg)}
+.cat-struct,button.chip.cat-struct[aria-pressed="true"]{background:var(--c-struct);color:var(--c-fg)}
+.cat-tone,button.chip.cat-tone[aria-pressed="true"]{background:var(--c-tone);color:var(--c-fg)}
+.cat-form,button.chip.cat-form[aria-pressed="true"]{background:var(--c-form);color:var(--c-fg)}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:6px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:4px 11px;font-size:.88rem;font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--pen);color:var(--pen-ink)}
+select{background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:4px 8px;font-size:.9rem;max-width:100%}
+.check{display:inline-flex;gap:6px;align-items:center;font-size:.9rem;font-weight:600}
+
+.btn{border:1.5px solid var(--line);background:var(--card);border-radius:6px;padding:9px 16px;font-weight:700}
+.btn:hover{border-color:var(--pen)}
+.btn.primary{background:var(--pen);border-color:var(--pen);color:var(--pen-ink)}
+.btn.ok{border-color:var(--ok);color:var(--ok)}
+.btn.quiet{border-color:transparent;background:transparent;color:var(--pen);padding-inline:6px;text-decoration:underline}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row.spread{justify-content:space-between}
+.meta{font-size:.88rem;color:var(--ink2);font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--pen);width:0}
+
+/* flashcard: an index card with a red rule under the header */
+.fc{background:var(--card);border:1.5px solid var(--line);border-radius:6px;min-height:300px;display:flex;flex-direction:column;cursor:pointer;text-align:left;width:100%;padding:0}
+.fc-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px;border-bottom:2px solid var(--no)}
+.fc-state{font-size:.82rem;font-weight:700;color:var(--ok)}
+.fc-body{padding:18px 16px;display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+.fc-front{justify-content:center;align-items:center;text-align:center}
+.fc-term{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,6vw,2.4rem);line-height:1.1}
+.fc-q{font-size:1.15rem;max-width:44ch}
+.fc-hint{padding:8px 16px 12px;font-size:.82rem;color:var(--ink2);text-align:center}
+.fc-back h3{font-size:1.4rem;font-weight:800}
+.lbl{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--ink2);display:block;margin-bottom:2px}
+
+/* excerpt: a newspaper clipping */
+.clip{background:var(--clip);border:1px solid var(--line);padding:12px 14px;margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.clip blockquote{margin:0;font-family:var(--serif);font-size:1.08rem;line-height:1.5;overflow-wrap:anywhere}
+.clip.plain blockquote{font-family:var(--body);font-size:1.02rem}
+.clip figcaption{font-size:.8rem;color:var(--ink2)}
+.words{display:flex;flex-wrap:wrap;gap:6px}
+.words span{font-family:var(--serif);background:var(--mark);color:var(--mark-ink);padding:2px 8px;border-radius:2px}
+.aud{font-size:.92rem;padding-left:10px;border-left:3px solid var(--c-struct)}
+
+/* quiz */
+.stage{background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.q-prompt{font-weight:700;font-size:1.08rem}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:6px;padding:10px 12px;width:100%}
+.opt:not(:disabled):hover{border-color:var(--pen);background:var(--pen-soft)}
+.opt .key{flex:0 0 auto;width:1.6em;height:1.6em;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:.82rem;font-weight:700;color:var(--ink2)}
+.opt .txt{min-width:0;display:flex;flex-direction:column;gap:4px}
+.opt:disabled{cursor:default;color:var(--ink)}
+.opt.is-ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.is-ok .key{border-color:var(--ok);color:var(--ok)}
+.opt.is-no{border-color:var(--no);background:var(--no-bg)}
+.opt.is-no .key{border-color:var(--no);color:var(--no)}
+.opt.is-dim{opacity:.72}
+.tag{font-size:.74rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.is-ok .tag{color:var(--ok)} .is-no .tag{color:var(--no)}
+.fb{border-top:1.5px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.fb-head{font-weight:800;font-family:var(--display);font-size:1.1rem}
+.fb.ok .fb-head{color:var(--ok)} .fb.no .fb-head{color:var(--no)}
+.missed{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.missed li{border-left:3px solid var(--no);padding-left:10px;display:flex;flex-direction:column;gap:2px}
+.missed .mq{color:var(--ink2);font-size:.92rem}
+.score{font-family:var(--display);font-weight:800;font-size:2rem;font-variant-numeric:tabular-nums}
+
+/* reference blocks */
+details.ref{border:1.5px solid var(--line);border-radius:6px;background:var(--card)}
+details.ref>summary{padding:9px 14px;font-weight:700;cursor:pointer}
+details.ref>div{padding:4px 14px 14px;display:flex;flex-direction:column;gap:10px}
+.letters{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.letters li{display:flex;gap:10px;align-items:flex-start;min-width:0}
+.letters b.l{font-family:var(--display);font-weight:800;font-size:1.3rem;width:1.5em;height:1.5em;flex:0 0 auto;display:grid;place-items:center;background:var(--c-struct);color:var(--c-fg);border-radius:4px}
+.letters span{font-size:.9rem;min-width:0}
+.letters span b{display:block;font-size:1rem}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.box{background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box ul:not(.letters){margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:5px}
+.box.good{border-top:4px solid var(--ok)} .box.bad{border-top:4px solid var(--no)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:0}
+.facts div{display:flex;flex-direction:column;min-width:0}
+.facts dt{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--ink2)}
+.facts dd{margin:0;font-weight:700}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;counter-reset:s}
+.step{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.step h3{font-size:1.25rem;font-weight:800}
+.step .ask{font-weight:700;font-size:.95rem}
+.step .eg{font-family:var(--serif);font-size:.95rem;color:var(--ink2)}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-19px;top:50%;transform:translateY(-50%);font-weight:800;color:var(--pen);font-size:1.1rem}
+.step.what{border-top:4px solid var(--c-tone)} .step.how{border-top:4px solid var(--c-lang)} .step.why{border-top:4px solid var(--c-evid)} .step.so{border-top:4px solid var(--c-appeal)}
+@media (max-width:700px){
+  .flow{grid-template-columns:1fr}
+  .step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-23px;transform:translateX(-50%)}
+}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.bank{display:flex;flex-wrap:wrap;gap:6px}
+.bank span{border:1.5px solid var(--line);border-radius:4px;padding:2px 8px;font-size:.92rem;background:var(--card)}
+footer{font-size:.82rem;color:var(--ink2);border-top:1px solid var(--line);padding-top:12px}
+@media (prefers-reduced-motion:no-preference){ .bar i{transition:width .25s} }
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">Unit 2 English · Analysing Argument</p>
+    <h1>Argument Analysis Drill</h1>
+    <p class="sub">Practise the terms and the thinking for the SAC. Most examples come from the article pack on Australia’s fuel and energy crisis.</p>
+  </header>
+
+  <nav aria-label="Sections">
+    <div class="navgroup" role="tablist" aria-label="Drill the terms">
+      <span class="eyebrow">Drill the terms</span>
+      <button class="tab" role="tab" data-tab="flashcards">Flashcards</button>
+      <button class="tab" role="tab" data-tab="definitions">Definitions</button>
+      <button class="tab" role="tab" data-tab="spot">Spot the device</button>
+      <button class="tab" role="tab" data-tab="effect">Effect on the audience</button>
+    </div>
+    <div class="navgroup" role="tablist" aria-label="Read the text">
+      <span class="eyebrow">Read the text</span>
+      <button class="tab" role="tab" data-tab="intro">CDFASTCATP</button>
+      <button class="tab" role="tab" data-tab="type">Text type</button>
+      <button class="tab" role="tab" data-tab="values">Values</button>
+      <button class="tab" role="tab" data-tab="tone">Tone</button>
+      <button class="tab" role="tab" data-tab="guide">Task guide</button>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Flashcards -->
+    <section class="panel" id="p-flashcards" role="tabpanel">
+      <div class="panel-head">
+        <h2>Flashcards</h2>
+        <p class="sub">Each card has a definition, an example and a note on how it persuades. Test yourself, or read the definition to a partner and have them name the term.</p>
+      </div>
+      <div class="controls">
+        <div class="ctl" id="fc-cats"><span class="ctl-label">Show</span></div>
+        <div class="ctl">
+          <span class="ctl-label">Front</span>
+          <span class="seg" id="fc-front"><button data-v="term" aria-pressed="true">Term</button><button data-v="def" aria-pressed="false">Definition</button></span>
+          <button class="btn quiet" id="fc-shuffle" type="button">Shuffle</button>
+          <label class="check"><input type="checkbox" id="fc-learning"> Only cards I am still learning</label>
+        </div>
+      </div>
+      <div id="fc-area"></div>
+    </section>
+
+    <!-- Quiz panels: filled by script -->
+    <section class="panel" id="p-definitions" role="tabpanel" hidden>
+      <div class="panel-head"><h2>Definitions</h2><p class="sub">Match each term to its meaning.</p></div>
+      <div class="controls"></div><div class="stage" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="p-spot" role="tabpanel" hidden>
+      <div class="panel-head"><h2>Spot the device</h2><p class="sub">Read the example and name the technique. Highlighted words show where to look.</p></div>
+      <div class="controls"></div><div class="stage" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="p-effect" role="tabpanel" hidden>
+      <div class="panel-head"><h2>Effect on the audience</h2><p class="sub">Choose the best explanation of what the writer wants this audience to think, feel or do. The wrong answers show common mistakes, and each one is labelled after you answer.</p></div>
+      <div class="controls"></div><div class="stage" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="p-intro" role="tabpanel" hidden>
+      <div class="panel-head"><h2>CDFASTCATP</h2><p class="sub">The ten details that belong in your introduction. Practise telling them apart.</p></div>
+      <details class="ref"><summary>Show the ten parts</summary><div><ul class="letters" id="letters-a"></ul></div></details>
+      <div class="controls"></div><div class="stage" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="p-type" role="tabpanel" hidden>
+      <div class="panel-head"><h2>Text type</h2><p class="sub">Work out the form of a text from its features, and think about why the form matters.</p></div>
+      <div class="controls"></div><div class="stage" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="p-values" role="tabpanel" hidden>
+      <div class="panel-head"><h2>Progressive or conservative values</h2><p class="sub">Decide which readers a belief or a line of text is most likely to appeal to.</p></div>
+      <details class="ref"><summary>What do these labels mean?</summary><div>
+        <div class="two">
+          <div class="box"><h3>Progressive values</h3><p>A general preference for social change and reform, with a larger role for government in solving problems.</p><p>Often linked with social justice, equality, public services and protecting the environment.</p></div>
+          <div class="box"><h3>Conservative values</h3><p>A general preference for tradition and stability, with a smaller role for government.</p><p>Often linked with individual responsibility, private enterprise, lower taxes and careful spending.</p></div>
+        </div>
+        <p class="sub">These are broad labels. Most people hold a mix of views, and some texts are written for everyone. The labels are useful because they help you explain why certain words would work on a certain audience.</p>
+      </div></details>
+      <div class="controls"></div><div class="stage" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="p-tone" role="tabpanel" hidden>
+      <div class="panel-head"><h2>Tone in vocabulary choices</h2><p class="sub">Tone is the writer’s attitude, and it shows in the words they choose. Name the tone, then find the words that create it.</p></div>
+      <div class="controls"></div><div class="stage" aria-live="polite"></div>
+    </section>
+
+    <!-- Task guide -->
+    <section class="panel" id="p-guide" role="tabpanel" hidden>
+      <div class="panel-head"><h2>Task guide</h2><p class="sub">What the SAC asks for and how to set out your response.</p></div>
+
+      <div class="box">
+        <h3>The task</h3>
+        <p>Write an essay analysing how the writer has used argument and language to persuade their audience to share their view.</p>
+        <dl class="facts">
+          <div><dt>Text</dt><dd>Unseen, given on the day</dd></div>
+          <div><dt>Time</dt><dd>2 periods (96 minutes), including annotating</dd></div>
+          <div><dt>Length</dt><dd>700 to 900 words</dd></div>
+          <div><dt>Marks</dt><dd>40</dd></div>
+          <div><dt>Bring</dt><dd>A dictionary</dd></div>
+          <div><dt>Must include</dt><dd>Analysis of the image</dd></div>
+        </dl>
+      </div>
+
+      <div class="box">
+        <h3>Introduction: CDFASTCATP</h3>
+        <p>Cover these ten details in three or four sentences.</p>
+        <ul class="letters" id="letters-b"></ul>
+      </div>
+
+      <div class="panel-head"><h3>Each body paragraph: What, How, Why, So</h3><p class="sub">Open with What. Then repeat How, Why and So as many times as you need.</p></div>
+      <div class="flow">
+        <div class="step what"><h3>What</h3><p class="ask">What is the writer arguing at this point, and in what tone?</p><p class="eg">Kennett opens in an alarmed tone, arguing that Australia relies too heavily on imports.</p></div>
+        <div class="step how"><h3>How</h3><p class="ask">Which words or image does the writer use? Quote them.</p><p class="eg">He calls Australia “a begging country”.</p></div>
+        <div class="step why"><h3>Why</h3><p class="ask">How do these words support the argument?</p><p class="eg">“Begging” suggests weakness and shame, which frames reliance on imports as a national failure.</p></div>
+        <div class="step so"><h3>So</h3><p class="ask">What is the audience meant to think, feel or do?</p><p class="eg">Herald Sun readers who value self-reliance are positioned to feel embarrassed and to want local production restored.</p></div>
+      </div>
+      <div class="box">
+        <h3>Three body paragraphs, no separate conclusion</h3>
+        <div class="tbl"><table>
+          <tr><th>Paragraph</th><th>Covers</th></tr>
+          <tr><td>1</td><td>How the text opens, the first main argument and the tone.</td></tr>
+          <tr><td>2</td><td>The second argument, any change in tone, and how the piece develops.</td></tr>
+          <tr><td>3</td><td>The final argument, any change in tone or structure, and the call to action.</td></tr>
+        </table></div>
+        <p>Analyse the image beside the argument it supports, or where it sits in the text.</p>
+      </div>
+
+      <div class="box">
+        <h3>What a strong response does</h3>
+        <div class="tbl"><table>
+          <tr><th>Skill</th><th>At the top level</th></tr>
+          <tr><td>Argument</td><td>Explains how the writer orders their arguments to guide the audience.</td></tr>
+          <tr><td>Language</td><td>Explains how word choices work on this audience and how they connect with the argument.</td></tr>
+          <tr><td>Evidence</td><td>Quotes the key moments of the text and explains what each is meant to do.</td></tr>
+          <tr><td>Visuals</td><td>Explains how the image supports the argument, beyond describing it.</td></tr>
+          <tr><td>Your writing</td><td>Clear, connected paragraphs that show how the arguments build.</td></tr>
+          <tr><td>Metalanguage</td><td>Precise, correct terms, used to explain and not just to label.</td></tr>
+        </table></div>
+        <p class="meta">Adapted from the VCAA performance descriptors for analysing argument.</p>
+      </div>
+
+      <div class="two">
+        <div class="box good">
+          <h3>What assessors reward</h3>
+          <ul>
+            <li>Using the background information to work out the audience and the writer’s purpose.</li>
+            <li>Explaining why the writer puts ideas in this order.</li>
+            <li>Choosing the most persuasive parts instead of covering everything.</li>
+            <li>Explaining how words target what this audience values.</li>
+            <li>Analysing the image as closely as the words.</li>
+            <li>Showing how argument, language and image work together.</li>
+          </ul>
+        </div>
+        <div class="box bad">
+          <h3>What holds responses back</h3>
+          <ul>
+            <li>Summarising what the writer says.</li>
+            <li>Naming a technique without explaining its effect.</li>
+            <li>Comments that could fit any text: “inclusive language makes the reader feel included”.</li>
+            <li>Overstating: “this forces the reader to agree”.</li>
+            <li>Stating the obvious: “uses comparison to compare”.</li>
+            <li>Only describing the image, or leaving it out.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="meta">Drawn from the VCAA English examination reports for 2024 and 2025.</p>
+
+      <div class="box">
+        <h3>Values drive feelings</h3>
+        <p>To explain an effect, name the value the words target and the feeling that follows.</p>
+        <div class="tbl"><table>
+          <tr><th>Words</th><th>Value targeted</th><th>Likely feeling</th></tr>
+          <tr><td>“millions of us”</td><td>Equality, community</td><td>Solidarity</td></tr>
+          <tr><td>“farmers”</td><td>Protection, security</td><td>Concern</td></tr>
+          <tr><td>“doing it tough”</td><td>Fairness</td><td>Sympathy</td></tr>
+          <tr><td>“fair share of tax”</td><td>Justice</td><td>Anger</td></tr>
+          <tr><td>“breathing space”</td><td>Relief</td><td>Hope</td></tr>
+        </table></div>
+      </div>
+
+      <div class="box">
+        <h3>Verbs for the So step</h3>
+        <div class="bank"><span>positions</span><span>invites</span><span>encourages</span><span>urges</span><span>prompts</span><span>evokes</span><span>elicits</span><span>fosters</span><span>instils</span><span>reinforces</span><span>highlights</span><span>underscores</span><span>undermines</span><span>dismisses</span><span>condemns</span></div>
+        <p>Avoid “forces” and “makes”. A writer can steer an audience but cannot control it.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>Built from the VCAA VCE English and EAL Study Design 2024–2027, the VCAA examination reports for 2024 and 2025, the VCAA performance descriptors, and the Year 11 Analysing Argument article pack and lesson slides. Items marked “Practice example” were written for this drill.</footer>
+</div>
+
+<script>
+/* ---------- Sources: the nine texts in the Year 11 article pack ---------- */
+const SRC = {
+  cc:   { who: "Climate Council", title: "Fuel shock: why clean energy is our best defence", form: "Opinion piece, Climate Council website", short: "Climate Council",
+          aud: "Visitors to the Climate Council website. Most hold strong environmental values." },
+  gr:   { who: "Tony Wood", title: "We must not waste this energy crisis", form: "Opinion piece, Grattan Institute website", short: "Grattan Institute",
+          aud: "Visitors to the Grattan Institute website. Most value evidence-based, long-term approaches to government decisions." },
+  plan: { who: "Australian Government", title: "National Fuel Security Plan", form: "Media release, Prime Minister’s website", short: "Fuel Security Plan",
+          aud: "Readers who are worried about how the fuel crisis will affect their everyday lives and who hope the government can manage it." },
+  jk:   { who: "Jeff Kennett", title: "Australia faces ‘economic tsunami’ from oil crisis", form: "Opinion piece, Herald Sun", short: "Kennett, Herald Sun",
+          aud: "Herald Sun readers. Many share Kennett’s conservative views." },
+  pm:   { who: "Anthony Albanese", title: "Address to the nation", form: "Speech, 1 April", short: "Albanese speech",
+          aud: "Australians listening at home who are worried about the fuel crisis and who hope the government can manage it." },
+  lib:  { who: "Liberal Party", title: "Coalition calls for immediate halving of fuel tax as national fuel crisis deepens", form: "Opinion piece, Liberal Party website", short: "Liberal Party",
+          aud: "Visitors to the Liberal Party website. Most hold conservative views and believe a Liberal government would do better than Labor." },
+  grn:  { who: "Australian Greens", title: "Free public transport in a fuel crisis", form: "Media release, Greens website", short: "The Greens",
+          aud: "Visitors to the Greens website. Most hold strong environmental and social justice values." },
+  pow:  { who: "Australian Government", title: "Fuel security powers to support fuel supply", form: "Media release, Prime Minister’s website", short: "Fuel security powers",
+          aud: "Readers who are worried about how the fuel crisis will affect their everyday lives and who hope the government can manage it." },
+  nt:   { who: "The Nightly", title: "Wider plan on fuel crisis needed to limit damage", form: "Editorial, The Nightly", short: "The Nightly",
+          aud: "Readers of The Nightly. Many see themselves as well informed about current affairs." },
+  px:   { who: "Practice example", title: "", form: "Written for this drill", short: "Practice example", aud: "" }
+};
+
+/* ---------- Flashcards ----------
+   cat: lang | appeal | evid | struct | tone
+   ex:  example text. [[double brackets]] mark the key words.
+   src: key in SRC ("note" = a description in our own words, not a quotation)
+   avoid: ids never offered as wrong options beside this card (too close in meaning)
+*/
+const CARDS = [
+  /* ---- Language techniques ---- */
+  { id: "emotive", cat: "lang", term: "Emotive language",
+    def: "Words chosen to stir strong feelings in the audience, such as fear, anger, pity or pride. Also called loaded language.",
+    ex: "Any financial assistance we might be able to offer will come from borrowed money, increasing our debt, which will [[slowly strangle]] our community.", src: "jk",
+    how: "Pushes the audience to react with feeling instead of weighing the facts calmly. “Strangle” turns debt into a slow, violent threat.",
+    avoid: ["connotation", "sympathy", "fear"] },
+  { id: "inclusive", cat: "lang", term: "Inclusive language",
+    def: "Words such as “we”, “our” and “us” that place the audience in the same group as the writer.",
+    ex: "All Australians are in this together. [[We]] can all play [[our]] part to make sure fuel gets to those who need it most.", src: "plan",
+    how: "Creates a sense of shared responsibility. People who feel part of a group are more likely to go along with what the group is asked to do.",
+    avoid: [] },
+  { id: "exclusive", cat: "lang", term: "Exclusive language",
+    def: "Words such as “they”, “them” and “those people” that set a group apart from the writer and the audience.",
+    ex: "These are Australian resources and [[these gas corporations’]] wartime profits should support Australians while we’re all doing it tough.", src: "grn",
+    how: "Draws a line between “us” and “them”. The audience is invited to blame or distrust the group left on the outside.",
+    avoid: ["attack"] },
+  { id: "rhetq", cat: "lang", term: "Rhetorical question",
+    def: "A question asked for effect, where the answer is implied and no reply is expected.",
+    ex: "What’s the point of the government saying we have ample fuel when we clearly do not, and certainly not in the right places?", src: "jk",
+    how: "Leads the audience to supply the “obvious” answer themselves, so the writer’s view feels like their own conclusion.",
+    avoid: [] },
+  { id: "repetition", cat: "lang", term: "Repetition",
+    def: "Using the same word or phrase several times for emphasis.",
+    ex: "Powering our homes and businesses with clean, affordable energy and reducing our reliance on energy retailers is [[a win]] for the climate, and [[a win]] for our wallets.", src: "cc",
+    how: "Makes the key idea stick in the mind and gives the point a sense of certainty.",
+    avoid: ["alliteration"] },
+  { id: "connotation", cat: "lang", term: "Connotation",
+    def: "The ideas and feelings a word suggests beyond its literal meaning. Connotations can be positive or negative.",
+    ex: "I have been saying for years, in this column and elsewhere, that Australia has become a [[begging]] country.", src: "jk",
+    how: "“Begging” suggests weakness, shame and dependence. The word carries a judgement without the writer having to spell it out.",
+    avoid: ["emotive"] },
+  { id: "hyperbole", cat: "lang", term: "Hyperbole",
+    def: "Deliberate exaggeration for dramatic effect.",
+    ex: "As a result of — in this case — conflicts beyond our control, our society could possibly be [[ripped apart]].", src: "jk",
+    how: "Makes the problem seem bigger and more urgent, so that doing nothing looks reckless.",
+    avoid: ["generalisation", "emotive"] },
+  { id: "anecdote", cat: "lang", term: "Anecdote",
+    def: "A short personal story used to illustrate a point.",
+    ex: "Last week I drove to three servos before I found one with diesel. The bloke behind me in the queue had been waiting since five in the morning.", src: "px",
+    how: "Gives the issue a human face and presents the writer as someone with first-hand experience.",
+    avoid: ["casestudy"] },
+  { id: "imperative", cat: "lang", term: "Imperative (command)",
+    def: "A sentence that tells the audience directly to do something.",
+    ex: "[[Get on board]] the call for free public transport during this fuel crisis now.", src: "grn",
+    how: "Speaks straight to the audience and leaves little room to stay neutral. It turns agreement into action.",
+    avoid: ["cta"] },
+  { id: "alliteration", cat: "lang", term: "Alliteration",
+    def: "Repeating the same starting sound in words that sit close together.",
+    ex: "The Coalition is ready to work constructively with the Government to deliver targeted, fully funded relief — driven by [[sensible savings]], not new higher taxes.", src: "lib",
+    how: "Catches the ear and makes a phrase easy to remember. It rarely persuades on its own, so ask which words it draws attention to.",
+    avoid: ["repetition"] },
+  { id: "colloquial", cat: "lang", term: "Colloquial language",
+    def: "Everyday, informal words and phrases, including slang.",
+    ex: "I know that you’re seeing this at the [[servo]] and at the supermarket. And I understand farmers and [[truckies]], small businesses and families are [[doing it tough]].", src: "pm",
+    how: "Makes the speaker sound down-to-earth and on the audience’s level, which builds trust.",
+    avoid: ["informal", "cliche"] },
+  { id: "metaphor", cat: "lang", term: "Metaphor and simile",
+    def: "Figures of speech that describe one thing in terms of another. A simile uses “like” or “as”; a metaphor does not.",
+    ex: "Because we have no capacity or reserves to easily address the potential [[economic tsunami]] that is building up.", src: "jk",
+    how: "Creates a vivid picture. A tsunami is huge, fast and unstoppable, so the comparison makes the threat feel overwhelming.",
+    avoid: ["analogy"] },
+  { id: "cliche", cat: "lang", term: "Cliché",
+    def: "An overused, familiar expression that most people understand at once.",
+    ex: "Without a solution this could be just [[the tip of the iceberg]].", src: "nt",
+    how: "Feels familiar and comfortable, so the audience accepts the idea quickly without questioning it.",
+    avoid: ["colloquial", "metaphor"] },
+  { id: "pun", cat: "lang", term: "Pun",
+    def: "A play on words that relies on a double meaning.",
+    ex: "The crisis has us [[over a barrel]].", src: "nt",
+    how: "Grabs attention with wit. Here the saying for being helpless also points to barrels of oil, which ties the helplessness to fuel.",
+    avoid: [] },
+  { id: "generalisation", cat: "lang", term: "Generalisation",
+    def: "A sweeping statement that treats what is true for some as true for all.",
+    ex: "Instead of responsible economic management, we have been propping up the inefficient, building a society that demands subsidies for [[every facet of life]].", src: "jk",
+    how: "Sounds like common sense and taps into beliefs the audience may already hold. It skips over the exceptions.",
+    avoid: ["hyperbole"] },
+  { id: "attack", cat: "lang", term: "Attack and praise",
+    def: "Criticising or complimenting a person or group in order to shape how the audience sees them.",
+    ex: "Anthony Albanese is [[asleep at the wheel]]. He needs to stop watching and start acting.", src: "lib",
+    how: "An attack positions the audience to think less of a person and so to doubt their decisions. Praise does the reverse.",
+    avoid: ["exclusive"] },
+  { id: "contrast", cat: "lang", term: "Dichotomy (contrast)",
+    def: "A contrast between two opposing groups or ideas, placed side by side to sharpen the difference.",
+    ex: "Gas exporters made [[windfall profits]] while households [[struggled]].", src: "cc",
+    how: "Makes one side look better, or worse, by comparison. The audience is steered towards the side the writer favours.",
+    avoid: [] },
+
+  /* ---- Appeals ---- */
+  { id: "fear", cat: "appeal", term: "Appeal to fear",
+    def: "Suggests that something harmful or frightening will follow unless the audience acts.",
+    ex: "If growers can’t get fuel then the supermarket shelves will start to look bare of fruit and vegies.", src: "nt",
+    how: "People want to reduce a threat to themselves, so the writer’s solution starts to look necessary.",
+    avoid: ["alarmed", "emotive"] },
+  { id: "hippocket", cat: "appeal", term: "Appeal to the hip-pocket nerve",
+    def: "Plays on the audience’s concern about money: what things cost them and how their taxes are spent.",
+    ex: "People with EVs spend 40% less on annual vehicle running costs, or save around $1,400 per year on fuel and maintenance costs.", src: "cc",
+    how: "The audience is pleased by a saving or annoyed by a cost. Either way, the argument becomes about their own budget.",
+    avoid: [] },
+  { id: "patriotism", cat: "appeal", term: "Appeal to patriotism",
+    def: "Draws on the audience’s pride in their country and loyalty to it.",
+    ex: "Affordable and sovereign energy can underpin Australian industry, keep power prices down and maintain Australia’s status as a trusted and reliable energy exporter.", src: "plan",
+    how: "Stirs pride and a sense of shared identity, so that supporting the proposal feels like supporting the country.",
+    avoid: ["tradition"] },
+  { id: "family", cat: "appeal", term: "Appeal to family values",
+    def: "Suggests that families, and children in particular, should be protected and put first.",
+    ex: "This is a practical, immediate step the Government can take today to ease pressure on [[families already stretched]] by the Government’s cost of living crisis.", src: "lib",
+    how: "Draws on the wish to look after loved ones. A proposal framed as help for families is hard to argue against.",
+    avoid: ["sympathy"] },
+  { id: "tradition", cat: "appeal", term: "Appeal to tradition",
+    def: "Suggests that long-standing ways of doing things are valuable and worth keeping or bringing back.",
+    ex: "It was not that long ago that Australia, and Victoria in particular, produced enough oil, gas, and electricity to be self-sufficient at very cheap cost.", src: "jk",
+    how: "The past is presented as better and safer. The audience is invited to feel that something has been lost and should be restored.",
+    avoid: ["patriotism"] },
+  { id: "sympathy", cat: "appeal", term: "Appeal to sympathy",
+    def: "Invites the audience to feel sorry for people who are suffering.",
+    ex: "Our farmers, many of whom have been hit with floods, fires, and droughts, now might not have access to diesel to farm, run their machinery, and provide the community with the food we require.", src: "jk",
+    how: "Caring about the people affected makes the audience more willing to back a proposal that would help them.",
+    avoid: ["family", "emotive", "sympathetic"] },
+  { id: "fairness", cat: "appeal", term: "Appeal to fairness",
+    def: "Draws on the audience’s belief that people should be treated justly and should pay their fair share.",
+    ex: "Big corporations are not paying their [[fair share]] of tax.", src: "grn",
+    how: "Stirs a sense of injustice. Once something seems unfair, the audience expects it to be put right.",
+    avoid: [] },
+
+  /* ---- Evidence and reasoning ---- */
+  { id: "statistics", cat: "evid", term: "Statistics",
+    def: "Numbers and figures used as proof.",
+    ex: "We import more than [[90%]] of our refined fuel and export more than [[80%]] of our gas, tying local prices for households and businesses to volatile global markets.", src: "cc",
+    how: "Numbers look factual and objective, so the argument seems to rest on evidence and not just opinion.",
+    avoid: ["research", "graph"] },
+  { id: "expert", cat: "evid", term: "Expert opinion",
+    def: "The view of a person or organisation with specialist knowledge, used to support a claim.",
+    ex: "Already [[economists are warning]] that inflation is set to soar, with many tipping the Reserve Bank of Australia will respond by increasing interest rates again.", src: "nt",
+    how: "Borrows the authority of people the audience is likely to trust.",
+    avoid: ["research"] },
+  { id: "research", cat: "evid", term: "Research findings",
+    def: "Results from a study, report or analysis, cited as support.",
+    ex: "The renewables in our grid lowered average household electricity bills by up to $417 in 2024 by reducing our reliance on coal and gas.", src: "cc",
+    how: "Suggests the claim has been tested and measured, which makes it harder to dismiss.",
+    avoid: ["statistics", "expert", "casestudy"] },
+  { id: "casestudy", cat: "evid", term: "Case study",
+    def: "A real example, described in some detail, that shows how something has played out in practice.",
+    ex: "We experienced this after Russia invaded Ukraine in 2022. Petrol prices surged. Electricity bills jumped by around $400 a year on average.", src: "cc",
+    how: "Shows the claim has already happened once, which makes a warning about the future easier to believe.",
+    avoid: ["anecdote", "research", "analogy"] },
+  { id: "analogy", cat: "evid", term: "Analogy",
+    def: "Comparing one situation to another in order to explain or support a point.",
+    ex: "The economic impact is still unclear, but recent comments by the Prime Minister and the head of the IEA suggest it will be [[as bad as COVID]].", src: "gr",
+    how: "Links an unfamiliar problem to one the audience has lived through, so they grasp its scale quickly.",
+    avoid: ["metaphor", "casestudy", "contrast"] },
+  { id: "cause", cat: "evid", term: "Cause and effect",
+    def: "Reasoning that shows one thing leading directly to another.",
+    ex: "[[When]] fossil fuel supply is threatened, prices spike and Australians pay.", src: "cc",
+    how: "Makes the outcome look like the natural result of the cause, so the argument seems logical and hard to avoid.",
+    avoid: ["logic"] },
+  { id: "rebuttal", cat: "evid", term: "Counterargument and rebuttal",
+    def: "Naming an opposing view and then showing why it is wrong or weak.",
+    ex: "Arguments have been made to increase our crude oil production and domestic refinery capacity to reduce or even eliminate imports. There are major barriers. First, we have very limited oil reserves.", src: "gr",
+    how: "Shows the writer has considered the other side, and removes an objection before the audience can raise it.",
+    avoid: [] },
+  { id: "logic", cat: "evid", term: "Reason and logic",
+    def: "A calm, step-by-step line of reasoning that links ideas to reach a conclusion.",
+    ex: "Taken together, cost, risks, technical limitations, and development timelines suggest a domestic supply and production strategy doomed to failure.", src: "gr",
+    how: "Presents the view as a reasoned conclusion and not just a feeling, which makes opposing views look less convincing.",
+    avoid: ["cause", "sequencing"] },
+  { id: "graph", cat: "evid", term: "Graphs and diagrams",
+    def: "Evidence presented in visual form.",
+    ex: "The Climate Council places a line graph of electric vehicle sales beside its text. Australia’s line sits below those of China, the EU, the UK and Singapore.", src: "note",
+    how: "Lets the audience see the gap at a glance, and looks factual. Here it backs the claim that Australia is “lagging behind”.",
+    avoid: ["statistics", "visual"] },
+
+  /* ---- Structure and argument ---- */
+  { id: "contention", cat: "struct", term: "Contention",
+    def: "The writer’s main point of view on the issue. It is what they want the audience to agree with.",
+    ex: "Climate Council: Australia’s best protection against fuel price shocks is to speed up the move to renewable energy and electric transport.", src: "note",
+    how: "State it in your introduction. Every argument and language choice you analyse should link back to it.",
+    avoid: ["purpose", "supporting"] },
+  { id: "supporting", cat: "struct", term: "Supporting argument",
+    def: "A reason the writer gives to back up their main point of view.",
+    ex: "Tony Wood argues that drilling for more oil at home will not work, because Australia’s reserves are too small. This is one reason behind his call for a long-term fuel strategy.", src: "note",
+    how: "Start each body paragraph by naming the argument the writer is making at that point in the text.",
+    avoid: ["contention"] },
+  { id: "cta", cat: "struct", term: "Call to action",
+    def: "The point where the writer urges the audience to do something specific.",
+    ex: "And over coming weeks, if you can switch to catching the train or bus or tram to work, do so.", src: "pm",
+    how: "Often comes near the end. Explain what the audience is being asked to do and why they might now be willing.",
+    avoid: ["imperative", "purpose"] },
+  { id: "sequencing", cat: "struct", term: "Logical sequencing",
+    def: "The order in which arguments are placed so that each one builds on the last.",
+    ex: "The Climate Council opens with the threat of rising prices, then explains why Australia is exposed, and only then presents clean energy as the answer.", src: "note",
+    how: "An audience that accepts the first step is more likely to accept the next. Ask why the writer put this argument here.",
+    avoid: ["logic"] },
+  { id: "tone", cat: "struct", term: "Tone",
+    def: "The writer’s attitude towards the topic or the audience, shown through word choice and style.",
+    ex: "Kennett’s claim that “Australia has become a begging country” sets a critical, alarmed tone from his first sentence.", src: "note",
+    how: "Name the tone with a precise word, then explain what that attitude invites the audience to feel.",
+    avoid: ["shift"] },
+  { id: "shift", cat: "struct", term: "Tonal shift",
+    def: "A change in the writer’s attitude from one part of a text to another. Also called tonal modulation.",
+    ex: "Albanese begins sympathetically (“I understand that right now it’s hard to be positive”) and ends on a confident note (“I am absolutely certain of this”).", src: "note",
+    how: "A shift usually marks a new stage in the argument. Explain why the writer changes attitude at that point.",
+    avoid: ["tone"] },
+  { id: "audience", cat: "struct", term: "Intended audience",
+    def: "The specific group of people a text is written for.",
+    ex: "The Greens media release is written for visitors to the Greens website, who are likely to hold strong environmental and social justice values.", src: "note",
+    how: "Use the background information to work out who they are and what they value. Avoid writing “the general public”.",
+    avoid: [] },
+  { id: "purpose", cat: "struct", term: "Purpose",
+    def: "What the writer wants to achieve: what they want the audience to think, feel or do.",
+    ex: "The Liberal Party piece sets out to pressure the government into halving the fuel tax and to convince readers that Labor has handled the crisis badly.", src: "note",
+    how: "Keep it in view the whole way through. Each effect you describe should help explain how the writer pursues it.",
+    avoid: ["contention", "cta"] },
+  { id: "context", cat: "struct", term: "Context",
+    def: "The background to a text: the issue, the events that prompted it, and where and when it was published.",
+    ex: "Conflict in the Middle East has effectively closed the Strait of Hormuz, cutting about a fifth of the world’s oil supply and pushing up fuel prices in Australia.", src: "note",
+    how: "Open your introduction with one or two sentences of background so the reader knows why the text was written.",
+    avoid: [] },
+  { id: "positioning", cat: "struct", term: "Positioning",
+    def: "The way a writer steers the audience towards a particular view of a person, group or issue.",
+    ex: "By calling the war “illegal” and saying that “billionaires took us to war”, the Greens steer readers to see ordinary Australians as paying for other people’s decisions.", src: "note",
+    how: "“Positions the audience to…” is a useful phrase. It shows the writer is steering, not forcing.",
+    avoid: ["purpose"] },
+  { id: "visual", cat: "struct", term: "Visual",
+    def: "A photograph, cartoon or other image placed with a text to support its argument.",
+    ex: "The Liberal Party piece shows a hand holding a shopping list in front of a petrol station: petrol $120, groceries $200, electricity bill $180, medical bills $150.", src: "note",
+    how: "You must analyse it. Explain what it shows, which argument it supports, and what the audience is meant to feel.",
+    avoid: ["graph"] },
+  { id: "headline", cat: "struct", term: "Headline",
+    def: "The title of a text. It often signals the main point of view and sets the tone.",
+    ex: "Australia faces ‘economic tsunami’ from oil crisis", src: "jk",
+    how: "It is the first thing the audience reads. Analyse its word choices as you would any other line.",
+    avoid: [] },
+
+  /* ---- Tone words ---- */
+  { id: "optimistic", cat: "tone", term: "Optimistic",
+    def: "Hopeful and confident that things will turn out well.",
+    ex: "The good news is that we have the elements of a successful strategy.", src: "gr",
+    how: "Encourages the audience to believe the problem can be solved, so the proposal seems worth backing.",
+    avoid: ["encouraging", "reassuring"] },
+  { id: "assertive", cat: "tone", term: "Assertive",
+    def: "Confident and direct. States a view firmly, without hedging.",
+    ex: "We must not waste this crisis.", src: "gr",
+    how: "Projects certainty. A writer who sounds sure is easier to follow.",
+    avoid: ["authoritative", "urgent"] },
+  { id: "passionate", cat: "tone", term: "Passionate",
+    def: "Full of strong feeling and conviction about the issue.",
+    ex: "A gas tax of 25% on exports would bring in about $17 billion a year, and that would go a long way towards the cost of living relief we all desperately need.", src: "grn",
+    how: "Shows the writer cares deeply, and invites the audience to care as much.",
+    avoid: ["indignant", "urgent"] },
+  { id: "critical", cat: "tone", term: "Critical",
+    def: "Fault-finding. Points out what a person or group has done wrong.",
+    ex: "To date the Government’s response has been piecemeal.", src: "nt",
+    how: "Encourages the audience to judge the target as failing and to expect better.",
+    avoid: ["scathing", "accusatory", "indignant"] },
+  { id: "sarcastic", cat: "tone", term: "Sarcastic",
+    def: "Mocking. Says the opposite of what is meant, or makes a cutting remark, in order to ridicule.",
+    ex: "In the meantime, enjoy walking.", src: "jk",
+    how: "Invites the audience to share the writer’s scorn for the target.",
+    avoid: ["scathing"] },
+  { id: "sympathetic", cat: "tone", term: "Sympathetic",
+    def: "Shows care and understanding for people who are struggling.",
+    ex: "But I understand that right now it’s hard to be positive.", src: "pm",
+    how: "The audience feels heard, which builds trust in the speaker.",
+    avoid: ["sincere", "reassuring", "sympathy", "concerned"] },
+  { id: "formal", cat: "tone", term: "Formal",
+    def: "Serious and official in style. Avoids slang and personal chat.",
+    ex: "Next week the Government will introduce amendments to the Export Finance and Insurance Corporation Act, formalising the Commonwealth’s ability to underwrite additional cargoes and other vital strategic reserves as needed.", src: "pow",
+    how: "Sounds professional and in control, which suits a text that wants to be trusted on serious matters.",
+    avoid: ["measured", "authoritative"] },
+  { id: "informal", cat: "tone", term: "Informal",
+    def: "Relaxed and conversational, like everyday speech.",
+    ex: "If you’re hitting the road, don’t take more fuel than you need - just fill up like you normally would.", src: "pm",
+    how: "Closes the distance between speaker and audience, so the message feels like friendly advice.",
+    avoid: ["colloquial"] },
+  { id: "encouraging", cat: "tone", term: "Encouraging",
+    def: "Urges the audience on in a positive, supportive way.",
+    ex: "Now, it’s the Australian way that people want to do their bit - and there are simple ways that you can.", src: "pm",
+    how: "The audience feels capable of helping, which makes them more willing to act.",
+    avoid: ["optimistic", "reassuring"] },
+  { id: "sincere", cat: "tone", term: "Sincere",
+    def: "Honest and genuine. The speaker sounds as though they mean what they say.",
+    ex: "The months ahead may not be easy. I want to be upfront about that.", src: "pm",
+    how: "Honesty about bad news makes the audience more likely to believe the good news that follows.",
+    avoid: ["sympathetic"] },
+  { id: "alarmed", cat: "tone", term: "Alarmed",
+    def: "Worried and urgent about a danger. Sounds a warning.",
+    ex: "Add this disturbance to the increasing demands by some for higher wages and conditions, and we have a recipe for social dislocation as we have never witnessed.", src: "jk",
+    how: "Passes the writer’s worry on to the audience, so that action seems pressing.",
+    avoid: ["concerned", "urgent", "fear"] },
+  { id: "reassuring", cat: "tone", term: "Reassuring",
+    def: "Calms the audience’s worries and builds their confidence.",
+    ex: "The community can have confidence that we are working together through these challenges, step by step, with a comprehensive and staged approach.", src: "plan",
+    how: "Lowers anxiety and encourages trust in whoever is offering the comfort.",
+    avoid: ["optimistic", "encouraging", "sympathetic"] },
+  { id: "measured", cat: "tone", term: "Measured",
+    def: "Calm, careful and balanced. Avoids exaggeration.",
+    ex: "The immediate crisis requires both immediate action and a future focus.", src: "gr",
+    how: "Presents the writer as reasonable and fair, which suits an audience that distrusts drama.",
+    avoid: ["formal", "authoritative"] },
+  { id: "authoritative", cat: "tone", term: "Authoritative",
+    def: "Sounds knowledgeable and in command of the facts.",
+    ex: "Our national fuel reserves sit at 36 days worth — well below the international benchmark of 90 days.", src: "cc",
+    how: "The audience is more likely to accept claims from a voice that seems to know the subject.",
+    avoid: ["assertive", "formal", "measured"] },
+  { id: "accusatory", cat: "tone", term: "Accusatory",
+    def: "Blames a person or group directly for a problem.",
+    ex: "Families across the country are seeing their standard of living collapse, yet Labor does nothing.", src: "lib",
+    how: "Directs the audience’s frustration at a clear target.",
+    avoid: ["critical", "scathing", "indignant"] },
+  { id: "urgent", cat: "tone", term: "Urgent",
+    def: "Insists that action is needed straight away.",
+    ex: "Better to act swiftly and correctly now, and ease up if and when the situation improves, as we hope it will.", src: "jk",
+    how: "Creates pressure. Waiting is made to look like the risky choice.",
+    avoid: ["alarmed", "assertive", "passionate"] },
+  { id: "concerned", cat: "tone", term: "Concerned",
+    def: "Worried about the issue in a serious, restrained way.",
+    ex: "And so Australia is entering a period of very great uncertainty.", src: "nt",
+    how: "Signals that the issue deserves the audience’s attention without sounding panicked.",
+    avoid: ["alarmed", "sympathetic"] },
+  { id: "indignant", cat: "tone", term: "Indignant",
+    def: "Angry about something the writer sees as unfair.",
+    ex: "Albanese chose to back Trump and Netanyahu’s illegal war on the Middle East, so the federal government should pick up the tab.", src: "grn",
+    how: "Invites the audience to share the anger and to want the unfairness corrected.",
+    avoid: ["critical", "accusatory", "scathing", "passionate"] },
+  { id: "scathing", cat: "tone", term: "Scathing",
+    def: "Harshly and bitterly critical.",
+    ex: "Where, sadly, our government has sponsored unfettered corruption at the cost of the community that elected them.", src: "jk",
+    how: "Leaves the audience in no doubt that the target deserves contempt.",
+    avoid: ["critical", "accusatory", "indignant", "sarcastic"] }
+];
+
+/* ---------- Spot the device ----------
+   a: id of the correct card; d: ids of the three wrong options
+   q: optional prompt (default asks for the technique)
+*/
+const Q_TONE = "Which word best describes the tone of these lines?";
+const Q_STRUCT = "Which term names what is happening here?";
+const Q_APPEAL = "Which appeal is at work in these lines?";
+const SPOT = [
+  /* Language techniques */
+  { src: "lib", cat: "lang", a: "contrast", d: ["anecdote", "rhetq", "pun"],
+    text: "Anthony Albanese is asleep at the wheel. He needs to [[stop watching and start acting]].",
+    why: "“Watching” is set against “acting”. The pairing makes the Prime Minister look passive and the Coalition’s proposal look like the active choice." },
+  { src: "cc", cat: "lang", a: "connotation", d: ["pun", "anecdote", "rhetq"],
+    text: "While EV sales in Australia are picking up, we are still [[lagging behind]] the developed world.",
+    why: "“Lagging behind” suggests being slow and backward. The words carry a negative judgement about Australia’s progress." },
+  { src: "cc", cat: "lang", a: "repetition", d: ["pun", "anecdote", "exclusive"],
+    text: "Renewables, batteries and electrification are not only climate [[solutions]], they are also energy security [[solutions]].",
+    why: "“Solutions” is used twice in one sentence, which stresses that clean energy answers two problems at once." },
+  { src: "plan", cat: "lang", a: "inclusive", d: ["exclusive", "anecdote", "hyperbole"],
+    text: "[[We]] will [[all]] work [[together]] to deliver for the community and keep the economy moving for [[everyone]].",
+    why: "“We”, “all”, “together” and “everyone” place governments and readers in one group with a shared task." },
+  { src: "jk", cat: "lang", a: "hyperbole", d: ["pun", "anecdote", "inclusive"],
+    text: "Yet we have had within our country [[unlimited]] reserves of gas, and potentially oil, but government approval processes have made it impossible to drill and extract the oil and gas the country needs.",
+    why: "No reserve is literally unlimited. The exaggeration makes government approval rules look like the only thing standing in the way." },
+  { src: "jk", cat: "lang", a: "metaphor", d: ["statistics", "anecdote", "alliteration"],
+    text: "Had governments acted responsibly, and within their means, the country would not now be [[swimming in debt]].",
+    why: "The country is not literally swimming. The image suggests being surrounded by debt and struggling to stay afloat." },
+  { src: "lib", cat: "lang", a: "emotive", d: ["statistics", "pun", "rhetq"],
+    text: "He needs to stop watching and start acting. [[Australians are hurting.]]",
+    why: "“Hurting” is a feeling word. The short sentence asks for an emotional response to people’s pain." },
+  { src: "jk", cat: "lang", a: "repetition", d: ["anecdote", "expert", "pun"],
+    text: "[[Where]] individual responsibility for our own lives has almost become a thing of the past. [[Where]] governments have been bribing the community for their re-election, rather than acting and providing responsible leadership for our communities. [[Where]], sadly, our government has sponsored unfettered corruption at the cost of the community that elected them.",
+    why: "Three sentences in a row begin with “Where”. The repeated opening piles up the criticisms so they feel like a long list of failures." },
+  { src: "jk", cat: "lang", a: "attack", d: ["anecdote", "cliche", "tradition"],
+    text: "Where governments have been [[bribing the community]] for their re-election, rather than acting and providing responsible leadership for our communities.",
+    why: "Kennett criticises the character and motives of governments, accusing them of buying votes. This is an attack on a group." },
+  { src: "jk", cat: "lang", a: "colloquial", d: ["statistics", "expert", "repetition"],
+    text: "When there is a [[hiccup]] in the world, not only does access to such products get reduced, but the price becomes prohibitive.",
+    why: "“Hiccup” is a casual, everyday word for a disruption. It gives the sentence a plain-speaking feel." },
+  { src: "jk", cat: "lang", a: "rhetq", d: ["anecdote", "statistics", "cliche"],
+    text: "Should the first priority of governments right now not be to ensure the community has sufficient access to food and essential services?",
+    why: "Kennett does not expect a reply. The question is worded so that the only reasonable answer is “yes”." },
+  { src: "pm", cat: "lang", a: "generalisation", d: ["statistics", "anecdote", "rebuttal"],
+    text: "By nature, [[we’re an optimistic country]].",
+    why: "The statement sums up every Australian in one trait. It is a sweeping claim that flatters the audience." },
+  { src: "pm", cat: "lang", a: "imperative", d: ["rhetq", "statistics", "anecdote"],
+    text: "[[Think of others]] in your community, in the bush and in critical industries.",
+    why: "The sentence is a direct instruction to the listener. It begins with a verb and tells them what to do." },
+  { src: "pm", cat: "lang", a: "attack", d: ["statistics", "pun", "hyperbole"],
+    text: "Farmers and miners and tradies who need diesel, every single day. And all those shift workers and nurses, [[who do so much for our country]].",
+    why: "This is the praise side of attack and praise. Albanese compliments these workers so listeners will want to save fuel for them." },
+  { src: "lib", cat: "lang", a: "cliche", d: ["statistics", "anecdote", "rhetq"],
+    text: "Australians are being hit by [[a perfect storm]] of Labor’s home-grown inflation crisis and escalating global fuel pressures driven by conflict in the Middle East.",
+    why: "“A perfect storm” is a familiar, well-worn phrase for several bad things arriving at once." },
+  { src: "jk", cat: "lang", a: "alliteration", d: ["pun", "expert", "hyperbole"],
+    text: "We have no [[fat or financial]] reserves in the cupboard.",
+    why: "“Fat” and “financial” start with the same sound, which draws the ear to the claim that nothing has been set aside." },
+  { src: "grn", cat: "lang", a: "exclusive", d: ["anecdote", "statistics", "cliche"],
+    text: "[[Billionaires]] took us to war, and [[the rest of us]] are paying for it.",
+    why: "“Billionaires” are set apart from “the rest of us”. Readers are placed with the writer on one side, and the wealthy on the other." },
+  { src: "grn", cat: "lang", a: "colloquial", d: ["statistics", "expert", "repetition"],
+    text: "Albanese chose to back Trump and Netanyahu’s illegal war on the Middle East, so the federal government should [[pick up the tab]].",
+    why: "“Pick up the tab” is casual speech for paying the bill. It makes the demand sound like plain common sense." },
+  { src: "grn", cat: "lang", a: "pun", d: ["statistics", "anecdote", "expert"],
+    text: "[[Get on board]] the call for free public transport during this fuel crisis now.",
+    why: "“Get on board” means to join in. It also means boarding a train or bus, which fits a campaign about public transport." },
+  { src: "pow", cat: "lang", a: "connotation", d: ["statistics", "anecdote", "rhetq"],
+    text: "The Albanese Government is acting to [[shield]] Australia against any future fuel supply chain disruptions.",
+    why: "“Shield” suggests protection and defence. The word casts the government as a guardian standing between Australians and harm." },
+  { src: "nt", cat: "lang", a: "cliche", d: ["statistics", "expert", "anecdote"],
+    text: "There is an old saying that [[money makes the world go round]]. Well yes. And no. Actually it is oil that makes the world go round.",
+    why: "The editorial itself calls it “an old saying”. It opens with the well-worn phrase and then gives it a twist." },
+  { src: "nt", cat: "lang", a: "emotive", d: ["statistics", "anecdote", "analogy"],
+    text: "It seems [[ridiculous]] that a conflict on the other side of the world that has lasted for just short of 14 days is threatening to throw our economy into [[chaos]].",
+    why: "“Ridiculous” and “chaos” are feeling words. They invite frustration and worry." },
+  { src: "px", cat: "lang", a: "anecdote", d: ["statistics", "expert", "generalisation"],
+    text: "My neighbour runs a small delivery business. Last month her fuel bill doubled, and she has started turning down jobs on the far side of town.",
+    why: "It is a short story about one person the writer knows, told to make the wider problem feel real." },
+  { src: "px", cat: "lang", a: "metaphor", d: ["statistics", "anecdote", "generalisation"],
+    text: "Petrol prices are climbing [[like a lift with no top floor]].",
+    why: "This is a simile. It uses “like” to compare rising prices to a lift that never stops going up." },
+  { src: "px", cat: "lang", a: "generalisation", d: ["statistics", "anecdote", "expert"],
+    text: "Politicians [[never]] plan beyond the next election.",
+    why: "“Never” sweeps every politician into one claim, with no exceptions allowed." },
+  { src: "px", cat: "lang", a: "pun", d: ["statistics", "expert", "anecdote"],
+    text: "Headline: [[Fuel for thought]]: what the crisis should teach us",
+    why: "The headline plays on the saying “food for thought”, swapping in “fuel” to suit the topic." },
+  { src: "cc", cat: "lang", a: "contrast", d: ["anecdote", "rhetq", "hyperbole"],
+    text: "[[Unlike]] fossil fuels, solar and wind are freely available and abundant local resources that aren’t traded on volatile global markets.",
+    why: "“Unlike” sets fossil fuels against solar and wind. Renewables look safer because of what they are compared with." },
+
+  /* Appeals */
+  { src: "cc", cat: "appeal", q: Q_APPEAL, a: "hippocket", d: ["fear", "tradition", "patriotism"],
+    text: "Switching from gas to efficient electric appliances can [[save households between $500 and $1,900 every year]].",
+    why: "The line is about money in the reader’s own pocket. A yearly saving is offered as the reason to switch." },
+  { src: "pm", cat: "appeal", q: Q_APPEAL, a: "hippocket", d: ["fear", "tradition", "fairness"],
+    text: "Today, we cut the fuel excise in half. Cutting the tax on every litre of petrol, by 26 cents. Those savings have started showing up at your petrol station.",
+    why: "Albanese points to a saving listeners will notice when they pay for fuel." },
+  { src: "pm", cat: "appeal", q: Q_APPEAL, a: "patriotism", d: ["fear", "hippocket", "fairness"],
+    text: "These are uncertain times. But I am absolutely certain of this: we will deal with these global challenges, [[the Australian way]].",
+    why: "“The Australian way” draws on national pride and the idea that Australians share a character worth living up to." },
+  { src: "nt", cat: "appeal", q: Q_APPEAL, a: "fear", d: ["tradition", "patriotism", "family"],
+    text: "And yet the signs remain that we are [[at risk]] of seeing the fuel crisis turn into an [[economic crisis]].",
+    why: "The line warns of something worse to come. It raises worry about what happens if nothing changes." },
+  { src: "cc", cat: "appeal", q: Q_APPEAL, a: "sympathy", d: ["tradition", "patriotism", "fairness"],
+    text: "Delaying this would only lock in higher costs, risk energy security and put more pressure on [[households already doing it tough]].",
+    why: "The highlighted words ask readers to feel for people who are already struggling." },
+  { src: "px", cat: "appeal", q: Q_APPEAL, a: "family", d: ["tradition", "patriotism", "fairness"],
+    text: "Parents should not have to choose between filling the tank and filling their children’s lunchboxes.",
+    why: "The sentence puts parents and children at the centre. It draws on the wish to protect and provide for family." },
+  { src: "px", cat: "appeal", q: Q_APPEAL, a: "tradition", d: ["fear", "hippocket", "fairness"],
+    text: "For generations, Australians have relied on the family car for the school run, the weekend drive and the summer road trip. That way of life is worth defending.",
+    why: "“For generations” and “that way of life” present long-standing habits as valuable and worth keeping." },
+  { src: "px", cat: "appeal", q: Q_APPEAL, a: "fairness", d: ["tradition", "patriotism", "fear"],
+    text: "It is not right that a nurse on night shift pays more to get to work while gas exporters bank record profits.",
+    why: "“It is not right” signals a judgement about justice. The reader is asked to see the situation as unfair." },
+
+  /* Evidence and reasoning */
+  { src: "cc", cat: "evid", a: "cause", d: ["anecdote", "rhetq", "expert"],
+    text: "[[As long as]] our power system and transport rely on coal, oil and gas, overseas conflicts [[will cause]] price shocks.",
+    why: "One thing is shown leading to another: reliance on fossil fuels leads to price shocks." },
+  { src: "cc", cat: "evid", a: "casestudy", d: ["anecdote", "hyperbole", "rhetq"],
+    text: "Following Russia’s invasion of Ukraine, oil prices surged — prompting the Australian Government to temporarily cut the fuel excise drivers pay on their petrol in half — from 44 cents to 22 cents.",
+    why: "This is a real, detailed example from the past, used to show what happens when supply is disrupted. It is not an anecdote because it is not a personal story." },
+  { src: "cc", cat: "evid", a: "statistics", d: ["expert", "generalisation", "anecdote"],
+    text: "Australia imports [[more than 90%]] of our refined oil products, like petrol and diesel, leaving us highly exposed to global oil supply disruptions and price shocks.",
+    why: "A figure is used as proof of how dependent Australia is on imported fuel." },
+  { src: "note", cat: "evid", a: "graph", d: ["anecdote", "expert", "rebuttal"],
+    text: "Beside its text, the Climate Council places a chart of electric vehicles as a share of new car sales from 2019 to 2025. Five coloured lines compare China, the EU, the UK, Singapore and Australia.",
+    why: "The evidence is presented in visual form, so readers can compare the countries at a glance." },
+  { src: "gr", cat: "evid", a: "expert", d: ["anecdote", "generalisation", "pun"],
+    text: "The economic impact is still unclear, but recent comments by [[the Prime Minister and the head of the IEA]] suggest it will be as bad as COVID.",
+    why: "Wood draws on people with authority and specialist knowledge to support his claim about the scale of the crisis." },
+  { src: "plan", cat: "evid", a: "cause", d: ["anecdote", "rhetq", "tradition"],
+    text: "Global conflict [[is causing]] an unprecedented shock to global oil and gas supply, [[pushing up]] fuel prices for Australian consumers and businesses.",
+    why: "The sentence traces a chain: conflict leads to a supply shock, which leads to higher prices." },
+  { src: "lib", cat: "evid", a: "statistics", d: ["anecdote", "expert", "cliche"],
+    text: "[[Around 500]] petrol stations are dry or without at least one type of fuel.",
+    why: "A number is given as proof of how widespread the shortage is." },
+  { src: "lib", cat: "evid", a: "rebuttal", d: ["anecdote", "analogy", "statistics"],
+    text: "The Government says there is enough fuel in the system, [[but if that is true]], then this is a failure to get fuel where it is needed.",
+    why: "The government’s claim is named first and then turned against it." },
+  { src: "nt", cat: "evid", a: "expert", d: ["anecdote", "generalisation", "hyperbole"],
+    text: "[[Treasurer Jim Chalmers]] has described the economic consequences of the war as “substantial” and said Treasury was in the process of updating its inflation forecasts.",
+    why: "The editorial quotes the Treasurer, a person with authority on the economy, to back its warning." },
+  { src: "px", cat: "evid", a: "analogy", d: ["statistics", "anecdote", "rebuttal"],
+    text: "Relying on imported fuel is like keeping one day’s food in the pantry and hoping the shops never close.",
+    why: "One situation (fuel imports) is explained by comparing it to another (an empty pantry) to support a point about risk." },
+  { src: "gr", cat: "evid", a: "rebuttal", d: ["anecdote", "analogy", "tradition"],
+    text: "[[Arguments have been made]] to increase our crude oil production and domestic refinery capacity to reduce or even eliminate imports. [[There are major barriers.]]",
+    why: "Wood states the opposing view and then explains why it will not work." },
+
+  /* Structure and argument */
+  { src: "lib", cat: "struct", q: Q_STRUCT, a: "contention", d: ["anecdote", "rebuttal", "shift"],
+    text: "The Coalition is calling on the Albanese Government to immediately halve the fuel tax for three months to provide urgent cost of living relief to Australian households and small businesses facing a deepening national fuel crisis.",
+    why: "This opening sentence states the main point of view of the whole piece." },
+  { src: "nt", cat: "struct", q: Q_STRUCT, a: "cta", d: ["anecdote", "casestudy", "shift"],
+    text: "To date the Government’s response has been piecemeal. [[It needs to get on the front foot with a wider plan to take us through this.]]",
+    why: "The final sentence of the editorial says what should now be done and who should do it." },
+  { src: "gr", cat: "struct", q: Q_STRUCT, a: "sequencing", d: ["anecdote", "shift", "cta"],
+    text: "Our strategy should have two parts. [[Part A]] should focus on fuel alternatives. … [[Part B]] should be to recalibrate our fuel reserves.",
+    why: "Wood sets out his case in ordered steps, so readers can follow the reasoning from one part to the next." },
+  { src: "pm", cat: "struct", q: Q_STRUCT, a: "shift", d: ["rebuttal", "anecdote", "generalisation"],
+    text: "Near the start: “But I understand that right now it’s hard to be positive.” At the end: “But I am absolutely certain of this: we will deal with these global challenges, the Australian way.”",
+    why: "Albanese moves from a sympathetic attitude to a confident one. This change of attitude is a tonal shift." },
+  { src: "note", cat: "struct", q: "This background note tells you about the text’s…", a: "audience", d: ["contention", "tone", "cta"],
+    text: "From the publication background for the Climate Council piece: “Most people visiting this site would have strong environmental values.”",
+    why: "The note describes who is reading. Use it to explain why particular words and arguments would work on them." },
+  { src: "note", cat: "struct", q: "The reason quoted here is a…", a: "supporting", d: ["cta", "rebuttal", "shift"],
+    text: "The Climate Council’s main point is that clean energy is Australia’s best defence. One reason it gives: “People with EVs spend 40% less on annual vehicle running costs.”",
+    why: "The saving is a reason offered to back up the main point of view." },
+  { src: "note", cat: "struct", q: "This background information is the text’s…", a: "context", d: ["contention", "tone", "cta"],
+    text: "Tony Wood’s piece was published on 25 March 2026, several weeks into a fuel shortage caused by conflict in the Middle East.",
+    why: "It describes when the text appeared and what was happening at the time." },
+
+  /* Tone */
+  { src: "cc", cat: "tone", q: Q_TONE, a: "assertive", d: ["sarcastic", "sympathetic", "informal"],
+    text: "The only durable protection is to reduce our dependence by accelerating renewable energy and the electrification of homes, businesses and transport.",
+    why: "“The only durable protection” leaves no room for doubt. The view is stated firmly and directly." },
+  { src: "gr", cat: "tone", q: Q_TONE, a: "optimistic", d: ["critical", "sarcastic", "alarmed"],
+    text: "The time is rapidly approaching when range anxiety will be a thing of the past because of new batteries and ultra-fast charging.",
+    why: "Wood looks ahead with confidence to a problem being solved." },
+  { src: "pow", cat: "tone", q: Q_TONE, a: "reassuring", d: ["sarcastic", "alarmed", "indignant"],
+    text: "We are acting now to prepare and shield Australians from the worst of it.",
+    why: "The line is designed to calm worry by showing that protection is already under way." },
+  { src: "lib", cat: "tone", q: Q_TONE, a: "critical", d: ["encouraging", "sympathetic", "optimistic"],
+    text: "Inflation has already beaten this Government, and now a national fuel crisis is making it worse.",
+    why: "The sentence finds fault with the government, presenting it as defeated and failing." },
+  { src: "pow", cat: "tone", q: Q_TONE, a: "formal", d: ["sarcastic", "informal", "indignant"],
+    text: "Eligibility for underwriting support will be structured to ensure additional supply can be delivered quickly through trusted operators with the capability and networks to get fuel where it needs to go.",
+    why: "The official vocabulary and long, impersonal sentence give the line a serious, businesslike sound." },
+  { src: "pm", cat: "tone", q: Q_TONE, a: "sympathetic", d: ["sarcastic", "scathing", "formal"],
+    text: "I know that you’re seeing this at the servo and at the supermarket. And I understand farmers and truckies, small businesses and families are doing it tough.",
+    why: "“I know” and “I understand” show care for what listeners are going through." },
+  { src: "px", cat: "tone", q: Q_TONE, a: "sarcastic", d: ["sincere", "optimistic", "formal"],
+    text: "Oh, wonderful. Another plan to make a plan. That should fill the tank.",
+    why: "The writer says “wonderful” but means the opposite. The mocking praise ridicules the plan." },
+  { src: "jk", cat: "tone", q: Q_TONE, a: "alarmed", d: ["optimistic", "sarcastic", "informal"],
+    text: "The total impact on our economy, our way of life, might be severely tested in a way it never has been.",
+    why: "Kennett sounds a warning about a danger of a scale not seen before." },
+  { src: "nt", cat: "tone", q: Q_TONE, a: "informal", d: ["formal", "alarmed", "scathing"],
+    text: "There is an old saying that money makes the world go round. [[Well yes. And no.]]",
+    why: "The short, chatty fragments sound like someone thinking aloud in conversation." },
+  { src: "lib", cat: "tone", q: Q_TONE, a: "accusatory", d: ["optimistic", "reassuring", "measured"],
+    text: "This will ensure Australians aren’t forced to pay the price of a global fuel shock on top of a cost-of-living crisis [[caused by record government spending]].",
+    why: "The highlighted words pin the blame for the cost-of-living crisis directly on the government." }
+];
+
+/* ---------- Effect on the audience ----------
+   opts: one has ok:true. Others carry a flaw code:
+   general | over | wrong | desc | obvious | aud
+*/
+const EFFECT = [
+  { src: "cc", dev: ["cause"],
+    text: "When fossil fuel supply is threatened, prices spike and Australians pay.",
+    opts: [
+      { ok: true, t: "Positions readers to see fossil fuels as a risk to their own budgets as well as to the environment, giving them a practical reason to back clean energy." },
+      { f: "general", t: "Draws readers into the issue from the start, so that they are interested in the topic and want to keep reading the rest of the article to find out more." },
+      { f: "over", t: "Proves to every reader that fossil fuels are the cause of all price rises, leaving them certain that coal, oil and gas must be banned in Australia immediately." },
+      { f: "wrong", t: "Reassures readers that price rises are a normal part of the market, so they feel that nothing about Australia’s energy system needs to change." } ] },
+  { src: "cc", dev: ["statistics", "authoritative"],
+    text: "Our national fuel reserves sit at 36 days worth — well below the international benchmark of 90 days.",
+    opts: [
+      { ok: true, t: "Invites concern at how exposed Australia is, so readers accept that the current system leaves the country poorly protected." },
+      { f: "desc", t: "Tells readers that Australia holds 36 days of fuel in reserve and that the international benchmark for fuel reserves is 90 days, which is a higher number." },
+      { f: "wrong", t: "Encourages readers to feel proud that Australia can get by on far less fuel than other countries need, which shows how efficient the country has become." },
+      { f: "over", t: "Forces readers into a panic about running out, so that they rush out and begin stockpiling petrol straight away." } ] },
+  { src: "cc", dev: ["hippocket", "statistics"],
+    text: "People with EVs spend 40% less on annual vehicle running costs, or save around $1,400 per year on fuel and maintenance costs.",
+    opts: [
+      { ok: true, t: "Shows readers that the environmental choice is also the cheaper one, so switching to an EV looks sensible for their own household." },
+      { f: "obvious", t: "Uses statistics about the running costs of electric vehicles in order to persuade the reader by giving them statistics about electric vehicles." },
+      { f: "wrong", t: "Leaves readers feeling guilty and foolish about all the money they have spent on petrol, so they become angry with the Climate Council." },
+      { f: "aud", t: "Convinces conservative readers that the cheapest answer is for the government to halve the fuel tax for the next three months." } ] },
+  { src: "cc", dev: ["repetition", "hippocket"],
+    text: "Powering our homes and businesses with clean, affordable energy and reducing our reliance on energy retailers is a win for the climate, and a win for our wallets.",
+    opts: [
+      { ok: true, t: "Tells environmentally minded readers they need not choose between their values and their finances, which makes the proposal easier to support." },
+      { f: "obvious", t: "Repeats the words “a win” twice in the same sentence, so that the idea of winning is repeated for the reader and they notice the repetition." },
+      { f: "wrong", t: "Leaves readers worried that clean energy will end up costing their household more than gas, so they feel torn about supporting it." },
+      { f: "over", t: "Guarantees that every Australian who reads the sentence will install solar panels and a battery at home." } ] },
+  { src: "cc", visual: true, dev: ["graph"],
+    text: "Visual: a line graph of electric vehicles as a share of new car sales, 2019 to 2025. Australia’s line sits below those of China, the EU, the UK and Singapore, and a red label points out that Australia is well behind. The text beside it says “we are still lagging behind the developed world”.",
+    opts: [
+      { ok: true, t: "Lets readers see Australia’s low line for themselves, encouraging unease that the country has fallen behind and support for faster change." },
+      { f: "desc", t: "Shows a graph with five coloured lines, one each for China, the EU, the UK, Singapore and Australia, with years along the bottom and percentages up the side." },
+      { f: "wrong", t: "Gives readers confidence that Australia is already leading the developed world in electric vehicle sales, so no further action is needed." },
+      { f: "general", t: "Breaks up the text and adds colour to the page, which helps to hold readers’ interest." } ] },
+
+  { src: "gr", dev: ["assertive", "inclusive"],
+    text: "We must not waste this crisis.",
+    opts: [
+      { ok: true, t: "Recasts the crisis as a chance to plan ahead, urging readers who value long-term thinking to expect more than a quick fix." },
+      { f: "wrong", t: "Frightens readers into believing that the crisis is permanent and that no strategy, however carefully planned, could ever solve it." },
+      { f: "obvious", t: "Includes the reader in the sentence by using the inclusive word “we”, which is inclusive language that makes the reader feel included." },
+      { f: "desc", t: "States the writer’s opinion that the crisis is something that should not be wasted." } ] },
+  { src: "gr", dev: ["rebuttal", "measured"],
+    text: "Arguments have been made to increase our crude oil production and domestic refinery capacity to reduce or even eliminate imports. There are major barriers. First, we have very limited oil reserves.",
+    opts: [
+      { ok: true, t: "Shows readers that the alternative has been weighed and found unworkable, so Wood’s own strategy appears the more careful choice." },
+      { f: "wrong", t: "Stirs anger and contempt in readers towards the people who want to drill for more oil, so that they dismiss those people as foolish and greedy." },
+      { f: "aud", t: "Encourages readers to get behind a plan to drill for more oil and build new refineries, since this would end Australia’s reliance on imports." },
+      { f: "general", t: "Helps readers to trust the writer and to agree with the point of view he is presenting." } ] },
+  { src: "gr", dev: ["logic"],
+    text: "Taken together, cost, risks, technical limitations, and development timelines suggest a domestic supply and production strategy doomed to failure.",
+    opts: [
+      { ok: true, t: "Gathers the evidence into one calm conclusion, leading readers who value evidence to decide for themselves that the drilling option should be dropped." },
+      { f: "over", t: "Forces readers to accept, without any room for doubt, that Australia has no oil at all and will never be able to produce a single litre of its own fuel." },
+      { f: "wrong", t: "Appeals to readers’ pride in Australia and their loyalty to local industry, so that they feel a patriotic duty to support domestic oil production." },
+      { f: "desc", t: "Lists four things that the writer has discussed: cost, risks, technical limitations and development timelines." } ] },
+  { src: "gr", visual: true, dev: ["visual", "contrast"],
+    text: "Visual: a petrol station price board. Under “FUEL”, the top panel reads “Cost of not planning: 189.9 BILLIONS”. The panel below reads “Benefit of planning: SECURE FUTURE”.",
+    opts: [
+      { ok: true, t: "Turns a familiar price board into a warning, inviting readers to link poor planning with a bill they will pay and good planning with security." },
+      { f: "desc", t: "Shows a tall sign at a petrol station that has a green panel at the top, a red panel in the middle and another green panel below, each with words or numbers." },
+      { f: "wrong", t: "Suggests to readers that petrol is cheap at the moment, so there is little need for governments to spend time planning ahead." },
+      { f: "general", t: "Catches the reader’s eye and makes them want to look more closely at the article." } ] },
+
+  { src: "plan", dev: ["inclusive", "encouraging"],
+    text: "All Australians are in this together. We can all play our part to make sure fuel gets to those who need it most.",
+    opts: [
+      { ok: true, t: "Encourages worried readers to see saving fuel as a shared duty, so that voluntary action feels like a fair contribution and not a sacrifice." },
+      { f: "obvious", t: "Uses inclusive language such as “we” and “our” so that the reader is included and feels that they have been included by the writer." },
+      { f: "wrong", t: "Stirs resentment in city readers towards people in regional areas, who are presented as taking more than their fair share of the fuel." },
+      { f: "over", t: "Ensures that every Australian who reads it will stop driving until the crisis is over." } ] },
+  { src: "plan", dev: ["reassuring"],
+    text: "The community can have confidence that we are working together through these challenges, step by step, with a comprehensive and staged approach.",
+    opts: [
+      { ok: true, t: "Aims to calm anxious readers by presenting governments as organised and united, which builds trust that the crisis is being managed." },
+      { f: "wrong", t: "Alarms readers by suggesting that the crisis has moved beyond the control of any government, so they should prepare for the worst." },
+      { f: "aud", t: "Persuades readers that a Liberal government would have handled the fuel crisis better, which encourages them to turn against Labor at the next election." },
+      { f: "general", t: "Encourages readers to think carefully about the issue and to form their own opinion on it." } ] },
+  { src: "plan", visual: true, dev: ["visual"],
+    text: "Visual: a photograph of the Prime Minister in a suit and tie, standing in front of flags and holding up a printed copy of the plan. His expression is serious.",
+    opts: [
+      { ok: true, t: "Presents the Prime Minister as prepared and in charge, plan in hand, which supports the message that the government has the crisis under control." },
+      { f: "desc", t: "Shows the Prime Minister wearing glasses, a dark suit and a red tie, holding up a printed document with flags behind him on either side." },
+      { f: "wrong", t: "Suggests that the Prime Minister is unsure what to do and is still searching through his papers for an answer to the crisis." },
+      { f: "over", t: "Proves to readers beyond any doubt that the plan is going to work." } ] },
+
+  { src: "jk", dev: ["connotation", "critical"],
+    text: "I have been saying for years, in this column and elsewhere, that Australia has become a begging country.",
+    opts: [
+      { ok: true, t: "Stirs shame and wounded pride in readers who value self-reliance, so that dependence on imports looks like a national failure." },
+      { f: "wrong", t: "Invites readers to feel sorry for people in poorer countries who have to beg in order to survive, and to want Australia to send them more aid." },
+      { f: "wrong", t: "Encourages readers to feel proud of the strong trading relationships that Australia has built with other countries over many years." },
+      { f: "general", t: "Persuades readers to agree with Kennett by using a strong word that stands out." } ] },
+  { src: "jk", dev: ["emotive", "fear"],
+    text: "Any financial assistance we might be able to offer will come from borrowed money, increasing our debt, which will slowly strangle our community.",
+    opts: [
+      { ok: true, t: "Presents debt as a physical threat closing in on readers, raising fear that more government borrowing will end up hurting them." },
+      { f: "wrong", t: "Comforts readers that debt only builds up slowly, which means there is plenty of time for a future government to deal with it later." },
+      { f: "desc", t: "Explains to readers that the government would need to borrow money in order to offer financial assistance, and that borrowing increases debt." },
+      { f: "over", t: "Forces every reader to vote against the government at the next election." } ] },
+  { src: "jk", dev: ["sympathy"],
+    text: "Our farmers, many of whom have been hit with floods, fires, and droughts, now might not have access to diesel to farm, run their machinery, and provide the community with the food we require.",
+    opts: [
+      { ok: true, t: "Invites sympathy for farmers as people who have already suffered, so readers are more likely to back Kennett’s call to reserve diesel for them." },
+      { f: "wrong", t: "Encourages readers to blame farmers for using up diesel that city drivers need, and to resent the special treatment that farmers receive." },
+      { f: "obvious", t: "Appeals to the reader’s sympathy by describing floods, fires and droughts, so that the reader will feel sympathetic because of the appeal to sympathy." },
+      { f: "aud", t: "Persuades readers who care about the environment to replace their car with an electric vehicle." } ] },
+  { src: "jk", visual: true, dev: ["visual", "sympathy"],
+    text: "Visual: a photograph of a lone farmer in a hat walking with two dogs across a dry, brown paddock. The caption reads: “Our farmers, many who have been impacted by natural disasters, now might not have access to the fuel needed to run their machinery”.",
+    opts: [
+      { ok: true, t: "The lone figure in a dry paddock gives the crisis a human face, inviting readers to feel for farmers and agree they should come first for fuel." },
+      { f: "desc", t: "Shows a farmer in a red shirt and a wide hat walking through a brown paddock with two dogs, with some trees and low hills in the background." },
+      { f: "wrong", t: "Presents farming as a relaxed, comfortable way of life that the fuel crisis has not touched, so readers stop worrying about food supplies." },
+      { f: "general", t: "Adds a picture to the article, which makes the page more appealing to readers." } ] },
+  { src: "jk", dev: ["rhetq", "critical"],
+    text: "What’s the point of the government saying we have ample fuel when we clearly do not, and certainly not in the right places?",
+    opts: [
+      { ok: true, t: "Leads readers to answer that there is no point, positioning them to see the government’s reassurances as empty and to distrust what it says next." },
+      { f: "general", t: "Asks the reader a question, which gets them thinking about the issue and keeps them engaged with the rest of the article because they want to know the answer." },
+      { f: "wrong", t: "Builds readers’ confidence that fuel supplies are secure and are reaching the right places, as the government has said." },
+      { f: "over", t: "Leaves every reader furious with the government and ready to protest in the streets." } ] },
+  { src: "jk", dev: ["sarcastic"],
+    text: "Right now, governments must firstly focus on doing whatever is necessary to protect our food supplies. In the meantime, enjoy walking.",
+    opts: [
+      { ok: true, t: "Closes on a dry, mocking note that invites readers to share Kennett’s frustration and to picture the personal cost if governments fail to act." },
+      { f: "wrong", t: "Sincerely encourages readers to take up walking, because it is good for their health and will help them to save money during the crisis." },
+      { f: "desc", t: "Finishes the article with a short sentence about walking, which comes straight after a longer sentence about protecting food supplies." },
+      { f: "wrong", t: "Comforts readers that the crisis will make little difference to their daily lives." } ] },
+
+  { src: "pm", dev: ["colloquial", "sympathetic"],
+    text: "I know that you’re seeing this at the servo and at the supermarket. And I understand farmers and truckies, small businesses and families are doing it tough.",
+    opts: [
+      { ok: true, t: "The everyday words present Albanese as someone who shares listeners’ experience, building trust before he asks them to change their habits." },
+      { f: "wrong", t: "Leads listeners to decide that the Prime Minister is too casual and relaxed to be taken seriously during a national crisis, which weakens his message." },
+      { f: "desc", t: "Names the places where prices have risen and the groups of people who have been affected: farmers, truckies, small businesses and families." },
+      { f: "wrong", t: "Turns listeners against farmers and truckies for using so much of the country’s diesel." } ] },
+  { src: "pm", dev: ["hippocket"],
+    text: "Today, we cut the fuel excise in half. Cutting the tax on every litre of petrol, by 26 cents. Those savings have started showing up at your petrol station.",
+    opts: [
+      { ok: true, t: "Offers worried listeners a saving they can check for themselves at the bowser, as evidence that the government is acting and not only talking." },
+      { f: "wrong", t: "Warns listeners that petrol is about to become much more expensive than it is now, so they should fill up their cars before the price rises again." },
+      { f: "aud", t: "Persuades listeners that the Coalition deserves the credit for the tax cut, since it called for the fuel excise to be halved." },
+      { f: "general", t: "Uses a number to help persuade listeners to agree with what the speaker is saying." } ] },
+  { src: "pm", dev: ["sincere"],
+    text: "The months ahead may not be easy. I want to be upfront about that. No government can promise to eliminate the pressures that this war is causing. I can promise we will do everything we can to protect Australia from the worst of it.",
+    opts: [
+      { ok: true, t: "Admitting the limits of what he can do presents Albanese as honest, so listeners are more likely to believe the promise that follows." },
+      { f: "wrong", t: "Convinces listeners that the government has given up on solving the crisis and has no real intention of helping them through the months ahead." },
+      { f: "over", t: "Leaves listeners completely certain that prices will fall and that the crisis will be over within a few weeks." },
+      { f: "obvious", t: "Repeats the word “promise” so that listeners hear the word “promise” more than once." } ] },
+  { src: "pm", dev: ["cta", "attack"],
+    text: "And over coming weeks, if you can switch to catching the train or bus or tram to work, do so. That builds our reserves and it saves fuel for people who have no choice but to drive. Farmers and miners and tradies who need diesel, every single day. And all those shift workers and nurses, who do so much for our country.",
+    opts: [
+      { ok: true, t: "Links a small personal change to helping respected workers, so that taking the train feels like a generous act and not a burden." },
+      { f: "over", t: "Orders listeners off the road and leaves them with no choice but to give up driving altogether until the government tells them the crisis has ended." },
+      { f: "wrong", t: "Leads listeners to envy farmers, miners and tradies for being allowed extra fuel while everyone else is asked to go without." },
+      { f: "desc", t: "Tells listeners about the kinds of public transport and the kinds of workers there are." } ] },
+  { src: "pm", dev: ["patriotism", "shift"],
+    text: "These are uncertain times. But I am absolutely certain of this: we will deal with these global challenges, the Australian way. Working together - and looking after each other. As we always have.",
+    opts: [
+      { ok: true, t: "Draws on national pride and a shared history of pulling together, leaving listeners hopeful and more willing to do their part." },
+      { f: "wrong", t: "Leaves listeners feeling that other countries caused the problem, so it is up to those countries, and not ordinary Australians, to fix it." },
+      { f: "general", t: "Ends the speech in a strong and memorable way, so that listeners will remember what was said and think about it after the speech has finished." },
+      { f: "wrong", t: "Leaves listeners fearful and unsettled about what the coming months will bring." } ] },
+
+  { src: "lib", dev: ["attack", "metaphor"],
+    text: "Anthony Albanese is asleep at the wheel. He needs to stop watching and start acting.",
+    opts: [
+      { ok: true, t: "Confirms what these readers already suspect about Labor, picturing the Prime Minister as careless and dangerous so that the Coalition appears ready to act." },
+      { f: "wrong", t: "Invites readers to feel sympathy for a Prime Minister who is exhausted from working too hard, and to be more patient with his government." },
+      { f: "aud", t: "Persuades committed Labor voters to feel proud of the calm and careful way their leader has handled the crisis so far." },
+      { f: "general", t: "Describes the Prime Minister in a negative way, which helps to persuade the reader." } ] },
+  { src: "lib", dev: ["family", "accusatory"],
+    text: "Families across the country are seeing their standard of living collapse, yet Labor does nothing.",
+    opts: [
+      { ok: true, t: "Raises concern for struggling families and points the blame at Labor, encouraging readers to see a fuel tax cut as overdue help." },
+      { f: "wrong", t: "Reassures families that the government has the crisis in hand and that help with their living costs is already on the way." },
+      { f: "over", t: "Forces all families who read it to vote for the Liberal Party at the next election, because they now know for certain that Labor has done nothing." },
+      { f: "desc", t: "Mentions families, their standard of living and the Labor Party in the same sentence." } ] },
+  { src: "lib", visual: true, dev: ["visual", "hippocket"],
+    text: "Visual: a photograph of a hand holding a handwritten shopping list in front of a petrol station. The list reads: Petrol $120, Groceries $200, Electricity bill $180, Medical bills $150.",
+    opts: [
+      { ok: true, t: "Puts the crisis in the form of a household budget that readers recognise, so they feel the squeeze personally and agree that relief is urgent." },
+      { f: "desc", t: "Shows a hand holding a piece of lined paper with a handwritten list of four costs on it, in front of a petrol station with a red roof." },
+      { f: "wrong", t: "Suggests that families are wasting their money on things they do not really need, and should learn to budget more carefully." },
+      { f: "general", t: "Draws the reader’s eye to the image and encourages them to read the text beside it." } ] },
+  { src: "lib", dev: ["attack", "hyperbole"],
+    text: "Now thanks to Labor’s war on fossil fuels Australians are at breaking point.",
+    opts: [
+      { ok: true, t: "Casts Labor’s energy policy as an attack on ordinary people, inviting readers to blame the government, and not only the overseas conflict, for their costs." },
+      { f: "wrong", t: "Encourages readers to want Australia to join the war in the Middle East." },
+      { f: "aud", t: "Encourages readers to support stronger climate policy and a faster move away from fossil fuels, since those fuels have brought Australians to breaking point." },
+      { f: "obvious", t: "Uses emotive language to create emotion in the reader, so that the reader feels emotional about the emotive words." } ] },
+
+  { src: "grn", dev: ["exclusive", "fairness"],
+    text: "Billionaires took us to war, and the rest of us are paying for it.",
+    opts: [
+      { ok: true, t: "Sets a wealthy few against everyone else, stirring a sense of injustice so that making government and big business pay seems only fair." },
+      { f: "wrong", t: "Encourages readers to admire billionaires for the influence they have over world events, and to hope that they will use it to end the war." },
+      { f: "desc", t: "Says that billionaires were involved in starting the war and that other people are now paying higher prices because of it." },
+      { f: "general", t: "Prompts readers to have a strong reaction and to think more about the issue." } ] },
+  { src: "grn", dev: ["urgent", "attack"],
+    text: "This is simple, practical and could happen right now — if the Labor Government chooses to act.",
+    opts: [
+      { ok: true, t: "Presents free public transport as easy and immediate, so readers see any delay as Labor’s choice and feel moved to add pressure." },
+      { f: "wrong", t: "Leaves readers doubting whether free public transport could ever work in Australia, because the government has not chosen to introduce it." },
+      { f: "over", t: "Proves that free public transport will end the fuel crisis as soon as it is introduced, so every reader will demand it from their local member." },
+      { f: "desc", t: "Tells readers that the idea is simple and practical and that Labor could act." } ] },
+  { src: "grn", dev: ["imperative", "cta", "pun"],
+    text: "We know Labor won’t take action without Greens and community pressure. Get on board the call for free public transport during this fuel crisis now.",
+    opts: [
+      { ok: true, t: "Speaks to readers directly and invites them to join a campaign, turning agreement into something they can do straight away." },
+      { f: "over", t: "Commands readers to act, which leaves them with no choice but to obey and sign up to the campaign the moment they finish reading." },
+      { f: "wrong", t: "Discourages readers by suggesting that nothing they do will change Labor’s mind, so there is little point in getting involved." },
+      { f: "general", t: "Finishes the section with a strong sentence that stays in the reader’s mind." } ] },
+  { src: "grn", visual: true, dev: ["visual"],
+    text: "Visual: a banner photograph of a woman with a tote bag standing on a platform while a train passes in a blur of orange light. Below, on a green band, large white letters read “FREE PUBLIC TRANSPORT in a fuel crisis”.",
+    opts: [
+      { ok: true, t: "Shows an ordinary commuter with a train arriving, so readers can picture themselves using it, while the bold slogan fixes the demand in their minds." },
+      { f: "desc", t: "Shows a woman with a bag standing on a platform, a blurred train going past behind her, and some large white words on a green band underneath." },
+      { f: "wrong", t: "Presents public transport as slow, crowded and unreliable compared with driving, so readers are glad they own a car." },
+      { f: "over", t: "Forces everyone who sees it to give up their car and take the train to work." } ] },
+
+  { src: "pow", dev: ["connotation", "reassuring"],
+    text: "We are acting now to prepare and shield Australians from the worst of it.",
+    opts: [
+      { ok: true, t: "Presents the government as a protector already at work, easing readers’ anxiety and encouraging them to trust its handling of the crisis." },
+      { f: "wrong", t: "Leaves readers afraid that the government has left it too late, and that nothing it does now will protect them from shortages." },
+      { f: "desc", t: "States that the government is taking action in response to the fuel crisis and that the action is happening now and not at some later time." },
+      { f: "over", t: "Guarantees that no Australian will ever need to worry about fuel again." } ] },
+  { src: "pow", visual: true, dev: ["visual"],
+    text: "Visual: a photograph of three people in hi-vis clothing and hard hats standing at a fuel storage site under a blue sky. One of them points into the distance.",
+    opts: [
+      { ok: true, t: "Associates the announcement with practical work on the ground, suggesting to worried readers that people are already busy securing supply." },
+      { f: "desc", t: "Shows three people wearing orange and yellow hi-vis clothing and white hard hats, standing near some storage tanks on a sunny day with clouds in the sky." },
+      { f: "wrong", t: "Warns readers that fuel sites are dangerous places and that supply is about to fail, so they should fill their tanks while they can." },
+      { f: "general", t: "Adds interest to the media release so that people are more likely to read it." } ] },
+
+  { src: "nt", dev: ["pun"],
+    text: "The crisis has us over a barrel.",
+    opts: [
+      { ok: true, t: "The wordplay rewards readers who enjoy a clever phrase while making a serious point: Australia is helpless because it relies on oil." },
+      { f: "wrong", t: "Amuses readers so much that they stop worrying about the crisis and decide that the editorial is not meant to be taken seriously." },
+      { f: "wrong", t: "Confuses readers, because a barrel has no connection to the fuel crisis and the saying does not fit the topic of the editorial." },
+      { f: "general", t: "Gets the reader’s attention so that they keep reading the editorial." } ] },
+  { src: "nt", dev: ["fear", "cause"],
+    text: "If growers can’t get fuel then the supermarket shelves will start to look bare of fruit and vegies.",
+    opts: [
+      { ok: true, t: "Brings a distant conflict into readers’ own shopping trolleys, raising concern that the crisis will reach them and that a wider plan is needed." },
+      { f: "wrong", t: "Encourages readers to start growing fruit and vegetables at home, so that they no longer need to rely on supermarkets or on fuel." },
+      { f: "over", t: "Forces readers to rush to the supermarket and panic buy fresh food before the shelves are emptied by other shoppers." },
+      { f: "desc", t: "Explains that growers use fuel and that supermarkets sell fruit and vegetables." } ] },
+  { src: "nt", dev: ["critical", "cta"],
+    text: "To date the Government’s response has been piecemeal. It needs to get on the front foot with a wider plan to take us through this.",
+    opts: [
+      { ok: true, t: "Leaves readers judging the government’s efforts as scattered and too small, and expecting a fuller plan." },
+      { f: "wrong", t: "Leaves readers satisfied that the government has already done everything it reasonably could, and that no wider plan is needed." },
+      { f: "over", t: "Convinces every reader that the government has failed completely and must be removed from office at once." },
+      { f: "desc", t: "Ends the editorial by saying what the government has done so far and what it needs to do next." } ] },
+  { src: "nt", visual: true, dev: ["visual"],
+    text: "Visual: an image of a car’s fuel gauge in which dollar signs replace the usual markings between E and F. The caption reads: “We need real action on the fuel crisis.”",
+    opts: [
+      { ok: true, t: "Merges fuel and money in one image, reinforcing the editorial’s warning that a fuel crisis is turning into an economic one for readers." },
+      { f: "desc", t: "Shows a close-up of a fuel gauge on a dark background, with a red needle, the letters E and F, and several dollar signs around the dial." },
+      { f: "wrong", t: "Suggests to readers that fuel is plentiful and that prices are about to come down, so there is no need for a wider plan." },
+      { f: "general", t: "Makes the editorial look more interesting, which encourages people to read it." } ] }
+];
+
+/* ---------- Extra cards: terms from the Year 11 lesson slides, values, text types ---------- */
+CARDS.push(
+  { id: "pragmatic", cat: "appeal", term: "Pragmatic appeal",
+    def: "Appeals to practical action and realistic solutions.",
+    ex: "Our Government is undertaking [[every practical measure]] required to shield our nation from the worst of this global uncertainty.", src: "pow",
+    how: "Positions the writer as practical, active and focused on solutions, which suits an audience that wants results.",
+    avoid: ["logic"] },
+  { id: "moral", cat: "appeal", term: "Moral pressure",
+    def: "Language that encourages the audience to feel ethical responsibility or outrage.",
+    ex: "Billionaires took us to war, and [[the rest of us are paying for it]].", src: "grn",
+    how: "Presents suffering as unfair and morally unacceptable, so that doing nothing feels wrong.",
+    avoid: ["fairness", "sympathy", "indignant", "emotive"] },
+  { id: "salience", cat: "struct", term: "Salience",
+    def: "What stands out most to the eye or the ear in a text.",
+    ex: "The Greens list the benefits of free public transport as three bullet points. Set apart from the paragraphs, they are the first thing a reader notices.", src: "note",
+    how: "Draws attention to what the writer most wants noticed. Ask what has been made to stand out, and why.",
+    avoid: ["visual", "headline"] },
+  { id: "symbolism", cat: "struct", term: "Symbolism",
+    def: "When something in an image stands for a larger idea.",
+    ex: "In the Greens banner, a moving train stands for progress and for people moving forward together.", src: "note",
+    how: "Attaches positive or negative ideas to the subject without stating them outright.",
+    avoid: ["visual", "metaphor", "graph", "connotation"] },
+  { id: "escalation", cat: "struct", term: "Escalation",
+    def: "A build-up of urgency or emotional intensity as a text goes on.",
+    ex: "The Greens move from Australians “doing it tough” to relief that people “desperately need”.", src: "note",
+    how: "Builds pressure for immediate action by the time the audience reaches the end.",
+    avoid: ["shift", "sequencing", "hyperbole"] },
+  { id: "progressive", cat: "struct", term: "Progressive values",
+    def: "A general preference for social change and reform, with a larger role for government in solving problems. Often linked with social justice and protecting the environment.",
+    ex: "The Greens website and the Climate Council website both address readers who hold these values.", src: "note",
+    how: "Knowing what an audience values helps you explain why particular words would work on them.",
+    avoid: [] },
+  { id: "conservative", cat: "struct", term: "Conservative values",
+    def: "A general preference for tradition and stability, with a smaller role for government. Often linked with individual responsibility, private enterprise and careful spending.",
+    ex: "Jeff Kennett’s Herald Sun column and the Liberal Party website both address readers who hold these values.", src: "note",
+    how: "These are broad labels, and most people hold a mix of views. Use the publication background to judge the audience.",
+    avoid: [] },
+
+  { id: "oped", cat: "form", term: "Opinion piece",
+    def: "An article by a named writer giving their own view on an issue.",
+    ex: "Jeff Kennett’s column in the Herald Sun, and Tony Wood’s piece for the Grattan Institute.", src: "note",
+    how: "Look for a byline, the word “I” and a strong personal voice. The writer’s background affects how far the audience trusts them.",
+    avoid: [] },
+  { id: "editorial", cat: "form", term: "Editorial",
+    def: "An unsigned article that gives the view of the publication itself.",
+    ex: "The Nightly’s “Wider plan on fuel crisis needed to limit damage”.", src: "note",
+    how: "No individual writer is named, so write “the editorial argues”. It carries the authority of the whole publication.",
+    avoid: [] },
+  { id: "release", cat: "form", term: "Media release",
+    def: "An official statement issued by a government, party or organisation to announce its own position or actions.",
+    ex: "The government’s “National Fuel Security Plan”, and the Greens’ “Free public transport in a fuel crisis”.", src: "note",
+    how: "Often written in the third person (“The Government is acting…”). It shows the organisation in the best possible light.",
+    avoid: [] },
+  { id: "speech", cat: "form", term: "Speech",
+    def: "A text written to be spoken aloud to a listening audience.",
+    ex: "Anthony Albanese’s address to the nation, which opens “My fellow Australians” and closes “Thank you and good evening”.", src: "note",
+    how: "Write “the speaker” and “listeners”. Look for direct address (“you”), short sentences, repetition, a greeting and a sign-off.",
+    avoid: [] },
+  { id: "letter", cat: "form", term: "Letter to the editor",
+    def: "A short piece sent in by a member of the public, responding to an issue or to something the publication has run.",
+    ex: "Dear Editor, your article on fuel prices left out those of us who have no train to catch.", src: "px",
+    how: "Usually brief, personal and direct. The writer often speaks as an ordinary person affected by the issue.",
+    avoid: [] },
+  { id: "cartoon", cat: "form", term: "Cartoon",
+    def: "A drawing, usually a single panel, that comments on an issue through humour and exaggeration.",
+    ex: "A drawing of a politician asleep in the driver’s seat of a car labelled “Economy”, with the fuel gauge on empty.", src: "px",
+    how: "Analyse who is drawn, how they are exaggerated, any labels or caption, and who is being mocked.",
+    avoid: ["visual"] },
+  { id: "ad", cat: "form", term: "Advertisement",
+    def: "A message that uses images, a slogan and design to promote an idea, a product or an action.",
+    ex: "The Greens banner: a commuter on a platform above the slogan “FREE PUBLIC TRANSPORT in a fuel crisis”.", src: "note",
+    how: "There are few words, so each one counts. Analyse the slogan, the image, the colours and what stands out.",
+    avoid: ["visual"] },
+  { id: "news", cat: "form", term: "News report",
+    def: "An article that sets out to inform by reporting events and quoting sources, without giving the writer’s own view.",
+    ex: "Fuel prices rose again across Melbourne yesterday. A spokesperson for the consumer watchdog said further rises were likely.", src: "px",
+    how: "It is meant to inform, not persuade. Even so, word choice and the selection of facts can favour one side.",
+    avoid: [] }
+);
+
+/* ---------- Extra spot-the-device items ---------- */
+SPOT.push(
+  { src: "pow", cat: "appeal", q: Q_APPEAL, a: "pragmatic", d: ["tradition", "family", "fairness"],
+    text: "We are already in discussions with local and international fuel suppliers to help them source additional cargoes as needed to [[keep our nation and our people moving]].",
+    why: "The line stresses practical steps already under way and a concrete result: keeping people moving." },
+  { src: "grn", cat: "appeal", q: Q_APPEAL, a: "pragmatic", d: ["tradition", "patriotism", "fear"],
+    text: "This is [[simple, practical]] and could happen right now — if the Labor Government chooses to act.",
+    why: "“Simple” and “practical” present the proposal as realistic and easy to carry out." },
+  { src: "plan", cat: "appeal", q: Q_APPEAL, a: "moral", d: ["tradition", "hippocket", "fear"],
+    text: "We can all play our part to make sure fuel gets to [[those who need it most]].",
+    why: "The line asks readers to feel a duty towards others. Using less fuel is framed as the right thing to do." },
+  { src: "note", cat: "struct", q: Q_STRUCT, a: "salience", d: ["anecdote", "rebuttal", "shift"],
+    text: "The Greens set out the benefits of free public transport as three bullet points, each on its own line, in the middle of the media release.",
+    why: "The layout makes the benefits stand out from the surrounding paragraphs, so readers notice them first." },
+  { src: "note", cat: "struct", q: Q_STRUCT, a: "symbolism", d: ["anecdote", "rebuttal", "statistics"],
+    text: "In the Greens banner image, a train rushes past a waiting commuter. The moving train suggests progress and people moving forward together.",
+    why: "A visual element (the train) stands for a larger idea (progress)." },
+  { src: "grn", cat: "struct", q: Q_STRUCT, a: "escalation", d: ["anecdote", "rebuttal", "context"],
+    text: "Earlier: “Immediate cost-of-living relief for millions of us”. In the final line: “the cost of living relief we all [[desperately]] need”.",
+    why: "The wording becomes more intense by the end. “Desperately” raises the urgency of the same idea." },
+  { src: "grn", cat: "tone", q: Q_TONE, a: "indignant", d: ["measured", "reassuring", "optimistic"],
+    text: "The US and Israel’s [[illegal war]] on Iran is sending petrol prices [[skyrocketing]]. And the Albanese Labor Government is backing them in.",
+    why: "“Illegal” and “backing them in” express anger at something the writers see as wrong and unfair." },
+  { src: "grn", cat: "tone", q: Q_TONE, a: "optimistic", d: ["sarcastic", "alarmed", "scathing"],
+    text: "Free public transport during the fuel crisis would mean: [[Immediate cost-of-living relief]] for millions of us",
+    why: "Here the release turns to the good that its proposal would do. The tone is hopeful." },
+  { src: "grn", cat: "tone", q: Q_TONE, a: "accusatory", d: ["optimistic", "reassuring", "measured"],
+    text: "Australia’s big gas corporations are just some of the [[big corporate winners of this war]], especially now that gas facilities abroad have been targeted.",
+    why: "The line points the finger at a group and blames it for profiting from the crisis." },
+  { src: "grn", cat: "tone", q: Q_TONE, a: "urgent", d: ["measured", "sarcastic", "sympathetic"],
+    text: "Get on board the call for free public transport during this fuel crisis [[now]].",
+    why: "“Now” insists on action straight away." }
+);
+
+/* ---------- CDFASTCATP ---------- */
+const ELEMENTS = [
+  { id: "context",    letter: "C", name: "Context",    ask: "What was happening when the text was written?" },
+  { id: "date",       letter: "D", name: "Date",       ask: "When was it published or presented?" },
+  { id: "form",       letter: "F", name: "Form",       ask: "What type of text is it?" },
+  { id: "author",     letter: "A", name: "Author",     ask: "Who wrote it or spoke it?" },
+  { id: "source",     letter: "S", name: "Source",     ask: "Where was it published or presented?" },
+  { id: "title",      letter: "T", name: "Title",      ask: "What is the text called?" },
+  { id: "contention", letter: "C", name: "Contention", ask: "What is the writer’s point of view on the issue?" },
+  { id: "audience",   letter: "A", name: "Audience",   ask: "Who is the text aimed at?" },
+  { id: "tone",       letter: "T", name: "Tone",       ask: "What is the writer’s attitude, shown through word choice and style?" },
+  { id: "purpose",    letter: "P", name: "Purpose",    ask: "What does the writer want the audience to think, feel or do?" }
+];
+/* One row per text in the article pack. */
+const TEXTS = {
+  cc: { context: "Conflict in Iran has disrupted oil and gas shipments through the Strait of Hormuz, and fuel prices in Australia are rising.",
+        date: "5 March", form: "Opinion piece", author: "Climate Council", source: "The Climate Council website",
+        contention: "Australia’s best protection against fuel price shocks is to speed up the move to renewable energy and electric transport.",
+        audience: "Visitors to the site, most of whom hold strong environmental values",
+        tone: "Authoritative and assertive",
+        purpose: "To persuade readers to support faster investment in renewable energy and electric vehicles" },
+  gr: { context: "The fuel crisis has exposed weaknesses in Australia’s fuel supply: long supply chains, small reserves and only two refineries.",
+        date: "25 March 2026", form: "Opinion piece", author: "Tony Wood", source: "The Grattan Institute website",
+        contention: "Australia should use the crisis to build a long-term fuel strategy, moving to other fuels and rebuilding its reserves.",
+        audience: "Readers who value evidence-based, long-term approaches to government decisions",
+        tone: "Measured and assertive",
+        purpose: "To convince readers that long-term planning must start now, and that drilling for more oil at home is not the answer" },
+  plan: { context: "Global conflict has caused a shock to oil and gas supply, and National Cabinet has agreed on a shared response.",
+        date: "Monday 30 March 2026", form: "Media release", author: "The Australian Government", source: "The Prime Minister’s official website",
+        contention: "Governments have a staged plan for the fuel crisis, and every Australian can help by using fuel carefully.",
+        audience: "People who are worried about how the fuel crisis will affect their everyday lives",
+        tone: "Reassuring and formal",
+        purpose: "To build public confidence in the government’s response and encourage people to save fuel voluntarily" },
+  jk: { context: "Conflict in the Middle East has cut oil supplies, and Australia imports most of the fuel it uses.",
+        date: "31 March", form: "Opinion piece", author: "Jeff Kennett, a former premier of Victoria", source: "The Herald Sun",
+        contention: "Australia has become dangerously dependent on imports, and governments must act decisively to protect food and fuel supplies.",
+        audience: "Herald Sun readers, many of whom share his conservative views",
+        tone: "Alarmed and critical",
+        purpose: "To warn readers about the scale of the threat and turn them against the way governments have managed the economy" },
+  pm: { context: "The war in the Middle East has caused the biggest spike in petrol and diesel prices in history.",
+        date: "1 April", form: "Speech", author: "Anthony Albanese, the Prime Minister", source: "An address to the nation, with the transcript on the Prime Minister’s website",
+        contention: "The government is acting to protect Australians, and everyone can help by taking only the fuel they need.",
+        audience: "Australians at home who are worried about fuel prices",
+        tone: "Sympathetic and reassuring",
+        purpose: "To calm the public, explain what the government has done and ask people to save fuel" },
+  lib: { context: "Fuel prices are surging, and around 500 petrol stations are dry or short of at least one type of fuel.",
+        date: "27 March 2026", form: "Opinion piece", author: "The Liberal Party", source: "The Liberal Party website",
+        contention: "The government should immediately halve the fuel tax for three months.",
+        audience: "Visitors with conservative views who believe a Liberal government would do better than Labor",
+        tone: "Critical and urgent",
+        purpose: "To pressure the government into cutting the fuel tax and to present the Coalition as the side with a practical plan" },
+  grn: { context: "Petrol prices are rising sharply because of the war on Iran, adding to cost-of-living pressures.",
+        date: "March", form: "Media release", author: "The Australian Greens", source: "The Greens website",
+        contention: "The federal government should fund free public transport for as long as the fuel crisis lasts.",
+        audience: "Readers with strong environmental and social justice values",
+        tone: "Indignant and urgent",
+        purpose: "To build public pressure on the Labor government to make public transport free" },
+  pow: { context: "Regional fuel markets are under strain as global prices rise and demand doubles.",
+        date: "Saturday 28 March 2026", form: "Media release", author: "The Albanese Government", source: "The Prime Minister’s official website",
+        contention: "New fuel security powers will help suppliers bring extra fuel into Australia and get it to the regions.",
+        audience: "People who are worried about the crisis and hope the government can manage it",
+        tone: "Formal and reassuring",
+        purpose: "To show that the government is taking practical action and to reassure regional communities" },
+  nt: { context: "Two weeks into the conflict, petrol prices have soared and some outlets are limiting how much fuel people can buy.",
+        date: "12 March 2026", form: "Editorial", author: "The Nightly (no individual writer is named)", source: "The Nightly, an online news outlet",
+        contention: "The government’s response has been piecemeal, and it needs a wider plan.",
+        audience: "Readers who see themselves as well informed about current affairs",
+        tone: "Concerned and critical",
+        purpose: "To push the government to produce a fuller plan before the fuel crisis becomes an economic crisis" }
+};
+/* Sample introductions, split into parts. Second value = the CDFASTCATP element the part shows (or null). */
+const INTROS = [
+  { label: "Sample introduction: the Greens media release",
+    parts: [
+      ["Published in ", null], ["March", "date"], [" on ", null], ["the Australian Greens website", "source"], [", the ", null],
+      ["media release", "form"], [" ", null], ["“Free Public Transport in a Fuel Crisis”", "title"], [" responds to ", null],
+      ["rising petrol prices caused by conflict in the Middle East and ongoing cost-of-living pressures", "context"],
+      [". Targeting ", null], ["readers with strong environmental and social justice values", "audience"], [", ", null],
+      ["the Greens", "author"], [" argue that ", null],
+      ["the Albanese Government should fund free public transport during the fuel crisis", "contention"],
+      [" in order to reduce financial pressure on Australians and ease fuel shortages.", null] ] },
+  { label: "Sample introduction: Jeff Kennett’s opinion piece",
+    parts: [
+      ["As ", null], ["conflict in the Middle East cuts oil supplies to a country that imports most of its fuel", "context"], [", ", null],
+      ["former Victorian premier Jeff Kennett", "author"], [" argues in his ", null], ["Herald Sun", "source"], [" ", null],
+      ["opinion piece", "form"], [", ", null], ["“Australia faces ‘economic tsunami’ from oil crisis”", "title"], [" (", null],
+      ["31 March", "date"], ["), that ", null],
+      ["Australia has become dangerously dependent on imports and that governments must act decisively", "contention"],
+      [". In an ", null], ["alarmed and critical", "tone"], [" voice, he addresses ", null],
+      ["the newspaper’s largely conservative readers", "audience"], [", aiming ", null],
+      ["to turn them against the way governments have managed the economy", "purpose"], [".", null] ] }
+];
+
+/* ---------- Text type ---------- */
+const Q_TYPE = "Which text type is this?";
+const TYPEQ = [
+  { src: "note", a: "editorial", d: ["oped", "release", "news"],
+    text: "Published by a news outlet under the label “Editorial”. No writer is named. It gives the outlet’s own view of the fuel crisis.",
+    why: "An editorial is unsigned and speaks for the publication itself." },
+  { src: "jk", a: "oped", d: ["editorial", "release", "news"],
+    text: "By Jeff Kennett. “I have been saying for years, in this column and elsewhere, that Australia has become a begging country.”",
+    why: "A named writer gives a personal view in the first person, in a regular column." },
+  { src: "pm", a: "speech", d: ["release", "editorial", "letter"],
+    text: "My fellow Australians. … Tonight, I want to speak directly with you about what the Government is doing to shield Australia in these uncertain times. … Thank you and good evening.",
+    why: "It greets a listening audience, addresses them as “you” and signs off. It was written to be spoken." },
+  { src: "pow", a: "release", d: ["oped", "editorial", "speech"],
+    text: "Published on the Prime Minister’s website: “The Albanese Government is acting to shield Australia against any future fuel supply chain disruptions, by establishing new fuel security powers.”",
+    why: "An organisation announces its own actions, in the third person, on its own official website." },
+  { src: "grn", a: "release", d: ["editorial", "news", "letter"],
+    text: "Published on a political party’s website: “That’s why the Greens are calling on the government to provide federal funding to States and Territories to make public transport free.”",
+    why: "A party sets out its own position in an official statement. It refers to itself as “the Greens”, not “I”." },
+  { src: "gr", a: "oped", d: ["editorial", "release", "news"],
+    text: "By Tony Wood, published on the Grattan Institute website: “We must not waste this crisis. … Our strategy should have two parts.”",
+    why: "A named writer argues for his own view of what should be done." },
+  { src: "px", a: "letter", d: ["editorial", "oped", "release"],
+    text: "Dear Editor, I read your article on fuel prices with growing frustration. I am a nurse and I drive forty minutes to every shift. There is no train where I live. — R. Nguyen, Drysdale",
+    why: "A member of the public writes briefly to the publication, responding to something it ran, and signs with a name and suburb." },
+  { src: "px", a: "cartoon", d: ["ad", "news", "editorial"],
+    text: "A single drawn panel. A politician is asleep in the driver’s seat of a car labelled “Economy”. The fuel gauge sits on empty.",
+    why: "It is a drawing that makes its point through exaggeration, labels and humour, with almost no words." },
+  { src: "note", a: "ad", d: ["cartoon", "news", "letter"],
+    text: "A photograph of a commuter on a platform. Underneath, on a bright green band, large white letters read “FREE PUBLIC TRANSPORT in a fuel crisis”.",
+    why: "An image, a short slogan and bold design combine to promote an idea." },
+  { src: "px", a: "news", d: ["oped", "editorial", "release"],
+    text: "Fuel prices rose again across Melbourne yesterday. A spokesperson for the consumer watchdog said further rises were likely. Motoring groups have urged drivers not to panic buy.",
+    why: "It reports events and quotes sources. The writer’s own opinion does not appear." },
+  { src: "note", a: "speech", d: ["oped", "release", "cartoon"], q: "Which text type fits this description?",
+    text: "Written to be heard, not read. Pauses, pace and stress on certain words all help to persuade.",
+    why: "Only a speech is delivered aloud, so the way it is spoken becomes part of how it persuades." },
+  { src: "note", a: "release", d: ["news", "letter", "editorial"], q: "Which text type fits this description?",
+    text: "Issued by a government, party or organisation to announce its own decision, in the hope that news outlets will report it.",
+    why: "A media release is an organisation’s official statement about itself." },
+  { src: "note", a: "oped", d: ["news", "editorial", "release"], q: "Which text type fits this description?",
+    text: "A named writer argues for a personal point of view, often using “I”. The writer may be a journalist, an expert or a public figure.",
+    why: "The byline and personal voice mark it as an opinion piece." },
+  { src: "note", a: "editorial", d: ["oped", "letter", "news"], q: "Which text type fits this description?",
+    text: "States the position of a newspaper or news site on an issue of the day. Often uses “we” to speak for the publication.",
+    why: "An editorial is the publication’s own voice." },
+  { src: "note", a: "news", d: ["oped", "editorial", "ad"], q: "Which text type fits this description?",
+    text: "Sets out what happened, when and where, and quotes the people involved. Its main job is to inform.",
+    why: "A news report informs. The other three text types set out to persuade." },
+  { src: "note", a: "letter", d: ["release", "editorial", "speech"], q: "Which text type fits this description?",
+    text: "A few short paragraphs from an ordinary reader, printed by a newspaper, reacting to a recent story.",
+    why: "Letters to the editor come from members of the public and respond to what the publication has run." }
+];
+/* "So what?" questions about form. opts: first is correct. */
+const TYPEWHY = [
+  { src: "pm", q: "Albanese’s text is a speech. How does that shape the way he persuades?",
+    text: "I know that you’re seeing this at the servo and at the supermarket.",
+    opts: [
+      "He can address listeners directly as “you” in a warm, spoken style, which helps to build trust.",
+      "He has to avoid everyday words, because a speech must always sound official.",
+      "He cannot use any emotion, because listeners expect only facts and figures.",
+      "He writes in the third person, because a speaker never refers to himself as “I”." ],
+    why: "A speech allows direct address and a conversational voice. Albanese uses both." },
+  { src: "nt", q: "The Nightly’s text is an editorial. Why does that matter?",
+    text: "To date the Government’s response has been piecemeal. It needs to get on the front foot with a wider plan to take us through this.",
+    opts: [
+      "The criticism carries the weight of the whole publication, not just one writer.",
+      "The criticism is only one journalist’s private opinion, so readers can ignore it.",
+      "The text has to stay neutral, because an editorial is not allowed to take a side.",
+      "The text was written by the government, so it presents the government’s own view." ],
+    why: "An editorial speaks for the publication, which gives its judgement extra authority with regular readers." },
+  { src: "pow", q: "This text is a media release from the government. What should you keep in mind when you analyse it?",
+    text: "Across the board, the Albanese Government has been working through and planning for the impacts of this crisis and protecting Australians from the worst of this global challenge.",
+    opts: [
+      "It is the government describing its own actions, so it is designed to show them in the best light.",
+      "It was written by an independent journalist, so it gives a balanced account of both sides.",
+      "It is a reader’s response to a news story, so it reflects the views of an ordinary person.",
+      "It was written to be spoken aloud, so the sound of the words matters more than their meaning." ],
+    why: "A media release comes from the organisation it describes. Expect a favourable account." },
+  { src: "jk", q: "Kennett’s text is an opinion piece by a former premier. How might that affect Herald Sun readers?",
+    text: "I have been saying for years, in this column and elsewhere, that Australia has become a begging country.",
+    opts: [
+      "His experience in government and his long-running column may lead readers to treat him as someone worth trusting.",
+      "Readers will assume the piece is a neutral news report with no point of view.",
+      "Readers will take it as the official position of the current government.",
+      "Readers cannot tell who wrote it, because an opinion piece is always unsigned." ],
+    why: "An opinion piece rests on the writer’s own standing. Kennett reminds readers of his record to build credibility." }
+];
+
+/* ---------- Progressive or conservative values ---------- */
+const VALUE_OPTS = { p: "Progressive values", c: "Conservative values", b: "Broad appeal: aimed at people of all political views" };
+const Q_VAL_S = "This belief is most often linked with…";
+const Q_VAL_X = "Readers with which values are these words most likely to appeal to?";
+const VALUESQ = [
+  { src: "note", q: Q_VAL_S, a: "c", text: "People should take responsibility for their own lives and not rely on government support.",
+    why: "Individual responsibility and a smaller role for government are commonly linked with conservative values." },
+  { src: "note", q: Q_VAL_S, a: "p", text: "Governments should step in to support people who are struggling.",
+    why: "A larger role for government in solving social problems is commonly linked with progressive values." },
+  { src: "note", q: Q_VAL_S, a: "p", text: "Large corporations should pay more tax so that wealth is shared more evenly.",
+    why: "Social justice and a more even spread of wealth are commonly linked with progressive values." },
+  { src: "note", q: Q_VAL_S, a: "c", text: "Governments should live within their means and avoid going into debt.",
+    why: "Careful spending and low debt are commonly linked with conservative values." },
+  { src: "note", q: Q_VAL_S, a: "c", text: "Long-standing ways of life should be protected from rapid change.",
+    why: "A preference for tradition and stability is commonly linked with conservative values." },
+  { src: "note", q: Q_VAL_S, a: "p", text: "Society should move quickly to cut pollution, even if that means big changes to how we live.",
+    why: "Environmental protection and a readiness for change are commonly linked with progressive values." },
+  { src: "note", q: Q_VAL_S, a: "c", text: "Private businesses usually run things better than governments do.",
+    why: "Support for private enterprise is commonly linked with conservative values." },
+  { src: "note", q: Q_VAL_S, a: "p", text: "Public services such as transport should be cheap or free for everyone.",
+    why: "Government-funded services open to all are commonly linked with progressive values." },
+
+  { src: "jk", q: Q_VAL_X, a: "c", text: "Where individual responsibility for our own lives has almost become a thing of the past.",
+    why: "Kennett regrets the loss of individual responsibility, a value conservative readers tend to hold." },
+  { src: "grn", q: Q_VAL_X, a: "p", text: "Big corporations are not paying their fair share of tax.",
+    why: "The line draws on social justice: the belief that the wealthy should contribute more." },
+  { src: "jk", q: Q_VAL_X, a: "c", text: "Had governments acted responsibly, and within their means, the country would not now be swimming in debt.",
+    why: "Careful spending and low debt matter to readers with conservative values." },
+  { src: "cc", q: Q_VAL_X, a: "p", text: "Accelerating the rollout of a renewable grid and other clean technologies, including EVs, is the most effective way to lower energy bills, protect households and cut climate pollution at the same time.",
+    why: "Cutting climate pollution through rapid change draws on environmental values, which are linked with progressive readers." },
+  { src: "lib", q: Q_VAL_X, a: "c", text: "The Coalition is ready to work constructively with the Government to deliver targeted, fully funded relief — driven by sensible savings, not new higher taxes.",
+    why: "Lower taxes and spending restraint are values conservative readers tend to hold." },
+  { src: "grn", q: Q_VAL_X, a: "p", text: "That’s why the Greens are calling on the government to provide federal funding to States and Territories to make public transport free — for as long as the fuel crisis goes on for.",
+    why: "A government-funded public service, free to everyone, draws on progressive values." },
+  { src: "jk", q: Q_VAL_X, a: "c", text: "Yet we have had within our country unlimited reserves of gas, and potentially oil, but government approval processes have made it impossible to drill and extract the oil and gas the country needs.",
+    why: "The complaint about government rules holding back industry draws on a preference for less regulation." },
+  { src: "lib", q: Q_VAL_X, a: "c", text: "This relief can and should be offset through sensible reprioritisation, including: Ending the Electric Car Discount.",
+    why: "Paying for a tax cut by ending a government subsidy draws on a preference for lower government spending." },
+  { src: "grn", q: Q_VAL_X, a: "p", text: "Australia should put at least a 25% tax on gas exports.",
+    why: "Taxing corporate profits to fund relief for the public draws on social justice values." },
+  { src: "jk", q: Q_VAL_X, a: "c", text: "Instead of responsible economic management, we have been propping up the inefficient, building a society that demands subsidies for every facet of life.",
+    why: "The criticism of subsidies draws on self-reliance and small government." },
+  { src: "cc", q: Q_VAL_X, a: "p", text: "The conflict in Iran provides more impetus for governments to double down on policies that clean up our grid and our transport system.",
+    why: "A call for stronger government policy on clean energy draws on environmental values and a larger role for government." },
+  { src: "pm", q: Q_VAL_X, a: "b", text: "These are uncertain times. But I am absolutely certain of this: we will deal with these global challenges, the Australian way. Working together - and looking after each other.",
+    why: "A Prime Minister addressing the whole nation draws on values most Australians share, whatever their politics." },
+  { src: "plan", q: Q_VAL_X, a: "b", text: "All Australians are in this together. We can all play our part to make sure fuel gets to those who need it most.",
+    why: "The line is addressed to “all Australians”. It does not take a side between political groups." },
+  { src: "jk", q: Q_VAL_X, a: "c", text: "Wind and sunshine will never provide for all our needs consistently, and they certainly do not produce gas and oil.",
+    why: "Doubt about a rapid switch to renewables, and support for established energy sources, is more common among conservative readers." },
+  { src: "lib", q: Q_VAL_X, a: "c", text: "This will ensure Australians aren’t forced to pay the price of a global fuel shock on top of a cost-of-living crisis caused by record government spending.",
+    why: "Blaming high government spending draws on a preference for smaller government." },
+  { src: "grn", q: Q_VAL_X, a: "p", text: "Billionaires took us to war, and the rest of us are paying for it.",
+    why: "Setting ordinary people against a wealthy few draws on social justice values." },
+
+  { src: "note", q: "Judging by this background note, the intended audience mostly holds…", a: "p",
+    text: "Publication background: “Most people visiting this site would have strong environmental and social justice values.”",
+    why: "Environmental and social justice values are commonly described as progressive." },
+  { src: "note", q: "Judging by this background note, the intended audience mostly holds…", a: "c",
+    text: "Publication background: the writer “privatised many of Victoria’s public services, believing that private businesses should have more power. Many people reading his column would share his conservative views.”",
+    why: "The note says so directly, and support for private enterprise is a conservative value." },
+  { src: "note", q: "This text is most likely aimed at…", a: "b",
+    text: "A Prime Minister’s televised address to the nation during a crisis, opening with the words “My fellow Australians”.",
+    why: "An address to the nation is meant for everyone, so it relies on widely shared values." }
+];
+
+/* ---------- Tone in vocabulary choices ---------- */
+/* Find the words: which words do most to create the named tone? */
+const TONEW = [
+  { src: "nt", tone: "critical", text: "To date the Government’s response has been piecemeal.",
+    a: "piecemeal", d: ["To date", "response", "has been"],
+    why: "“Piecemeal” means done in scattered bits. It is the word that passes judgement." },
+  { src: "jk", tone: "alarmed", text: "Any financial assistance we might be able to offer will come from borrowed money, increasing our debt, which will slowly strangle our community.",
+    a: "slowly strangle", d: ["financial assistance", "borrowed money", "our community"],
+    why: "“Strangle” is a word of danger and harm. It carries the warning." },
+  { src: "plan", tone: "reassuring", text: "The community can have confidence that we are working together through these challenges…",
+    a: "can have confidence", d: ["these challenges", "The community", "through"],
+    why: "“Can have confidence” tells readers directly that they need not worry." },
+  { src: "lib", tone: "accusatory", text: "Families across the country are seeing their standard of living collapse, yet Labor does nothing.",
+    a: "yet Labor does nothing", d: ["Families across the country", "standard of living", "are seeing"],
+    why: "These words name who is to blame and what they have failed to do." },
+  { src: "pm", tone: "informal", text: "I know that you’re seeing this at the servo and at the supermarket.",
+    a: "servo", d: ["I know", "seeing this", "supermarket"],
+    why: "“Servo” is Australian slang. One casual word gives the sentence a relaxed, everyday sound." },
+  { src: "gr", tone: "optimistic", text: "The good news is that we have the elements of a successful strategy.",
+    a: "The good news", d: ["the elements", "we have", "is that"],
+    why: "“The good news” signals hope before the reader reaches the detail." },
+  { src: "grn", tone: "indignant", text: "Albanese chose to back Trump and Netanyahu’s illegal war on the Middle East, so the federal government should pick up the tab.",
+    a: "illegal war", d: ["the Middle East", "the federal government", "Albanese"],
+    why: "“Illegal” labels the war as wrong. It is the word that shows the writers’ anger at an injustice." },
+  { src: "lib", tone: "urgent", text: "This is a practical, immediate step the Government can take today to ease pressure on families…",
+    a: "immediate … today", d: ["practical … step", "ease pressure", "the Government … families"],
+    why: "“Immediate” and “today” both insist that there is no time to wait." },
+  { src: "pm", tone: "sympathetic", text: "And I understand farmers and truckies, small businesses and families are doing it tough.",
+    a: "I understand", d: ["farmers and truckies", "small businesses", "families"],
+    why: "“I understand” shows the speaker cares about what listeners are going through." },
+  { src: "jk", tone: "scathing", text: "Where, sadly, our government has sponsored unfettered corruption at the cost of the community that elected them.",
+    a: "sponsored unfettered corruption", d: ["our government", "the community", "elected them"],
+    why: "To accuse a government of sponsoring corruption without limit is about as harsh as criticism gets." },
+  { src: "cc", tone: "assertive", text: "The only durable protection is to reduce our dependence by accelerating renewable energy…",
+    a: "The only", d: ["our dependence", "renewable energy", "by accelerating"],
+    why: "“The only” rules out every other option. It states the view with complete confidence." },
+  { src: "gr", tone: "measured", text: "The economic impact is still unclear, but recent comments by the Prime Minister and the head of the IEA suggest it will be as bad as COVID.",
+    a: "still unclear … suggest", d: ["economic impact", "as bad as COVID", "the Prime Minister"],
+    why: "“Still unclear” and “suggest” are careful words. Wood avoids claiming more than he knows." }
+];
+/* Word groups: which tone do these vocabulary choices create? */
+const TONEC = [
+  { src: "jk", words: ["economic tsunami", "ripped apart", "slowly strangle", "social dislocation"], a: "alarmed", d: ["optimistic", "measured", "encouraging"],
+    why: "Every phrase describes damage or danger. Together they sound a warning." },
+  { src: "pow", words: ["shield", "secure", "protecting", "trusted operators"], a: "reassuring", d: ["sarcastic", "indignant", "alarmed"],
+    why: "These are words of safety and protection. They are chosen to calm worry." },
+  { src: "lib", words: ["asleep at the wheel", "does nothing", "a failure"], a: "accusatory", d: ["optimistic", "sympathetic", "formal"],
+    why: "Each phrase blames someone for not doing their job." },
+  { src: "pm", words: ["servo", "truckies", "tradies", "hitting the road"], a: "informal", d: ["formal", "scathing", "alarmed"],
+    why: "These are casual, everyday Australian expressions." },
+  { src: "pow", words: ["amendments", "underwrite", "indemnity", "eligibility"], a: "formal", d: ["informal", "sarcastic", "passionate"],
+    why: "This is official, legal-sounding vocabulary." },
+  { src: "gr", words: ["good news", "successful strategy", "a thing of the past"], a: "optimistic", d: ["critical", "alarmed", "sarcastic"],
+    why: "The phrases look forward to problems being solved." },
+  { src: "grn", words: ["illegal war", "Billionaires", "fair share", "pick up the tab"], a: "indignant", d: ["reassuring", "measured", "optimistic"],
+    why: "The words point to unfairness and to who should pay for it." },
+  { src: "lib", words: ["immediately", "today", "Right now", "urgent"], a: "urgent", d: ["measured", "sarcastic", "sympathetic"],
+    why: "Every word is about time running out." },
+  { src: "pm", words: ["I know", "I understand", "doing it tough"], a: "sympathetic", d: ["sarcastic", "scathing", "formal"],
+    why: "The speaker shows that he recognises what people are going through." },
+  { src: "gr", words: ["still unclear", "suggest", "may not be enough"], a: "measured", d: ["alarmed", "passionate", "sarcastic"],
+    why: "These are cautious words. The writer avoids overstating his case." },
+  { src: "nt", words: ["piecemeal", "ridiculous", "needs to get on the front foot"], a: "critical", d: ["encouraging", "reassuring", "optimistic"],
+    why: "Each phrase finds fault with how the crisis has been handled." },
+  { src: "pm", words: ["do their bit", "simple ways that you can", "Enjoy your Easter"], a: "encouraging", d: ["scathing", "alarmed", "formal"],
+    why: "The phrases urge listeners on in a positive, supportive way." }
+];
+(function () {
+  "use strict";
+  var $ = function (s, el) { return (el || document).querySelector(s); };
+  var $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var fmt = function (s) { return esc(s).replace(/\[\[/g, "<mark>").replace(/\]\]/g, "</mark>"); };
+  var plain = function (s) { return esc(String(s).replace(/\[\[|\]\]/g, "")); };
+  var shuffle = function (a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+  var KEYS = ["A", "B", "C", "D"];
+
+  var CATS = [
+    { id: "lang", name: "Language techniques" }, { id: "appeal", name: "Appeals" }, { id: "evid", name: "Evidence and reasoning" },
+    { id: "struct", name: "Structure and argument" }, { id: "tone", name: "Tone words" }, { id: "form", name: "Text types" }
+  ];
+  var catName = {}; CATS.forEach(function (c) { catName[c.id] = c.name; });
+  var byId = {}; CARDS.forEach(function (c) { byId[c.id] = c; });
+  var HOWLBL = { lang: "How it persuades", appeal: "How it persuades", evid: "How it persuades", struct: "In your analysis", tone: "Why a writer uses it", form: "What to look for" };
+  var elName = {}; ELEMENTS.forEach(function (e) { elName[e.id] = e.name; });
+
+  /* ---- saved state (this browser only; the page works without it) ---- */
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem("aad.v1")) || {}; } catch (e) { saved = {}; }
+  var known = {}; (saved.known || []).forEach(function (id) { known[id] = true; });
+  function save() { try { localStorage.setItem("aad.v1", JSON.stringify({ known: Object.keys(known), tab: current })); } catch (e) {} }
+
+  function cite(src) {
+    if (!src || src === "note") return "";
+    var s = SRC[src]; if (!s) return "";
+    if (src === "px") return "Practice example";
+    return esc(s.who) + ", “" + esc(s.title) + "” · " + esc(s.form);
+  }
+  function clip(html, caption, isPlain) {
+    return '<figure class="clip' + (isPlain ? " plain" : "") + '"><blockquote>' + html + "</blockquote>" + (caption ? "<figcaption>" + caption + "</figcaption>" : "") + "</figure>";
+  }
+  function cardExample(c) {
+    return clip(fmt(c.ex), cite(c.src), c.src === "note");
+  }
+
+  /* ---- small controls ---- */
+  function chips(host, items, selected, onChange) {
+    items.forEach(function (it) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip" + (it.cls ? " " + it.cls : "");
+      b.textContent = it.label; b.setAttribute("aria-pressed", selected[it.id] ? "true" : "false");
+      b.addEventListener("click", function () {
+        selected[it.id] = !selected[it.id];
+        if (!items.some(function (x) { return selected[x.id]; })) items.forEach(function (x) { selected[x.id] = true; });
+        $$("button.chip", host).forEach(function (bb, i) { bb.setAttribute("aria-pressed", selected[items[i].id] ? "true" : "false"); });
+        onChange();
+      });
+      host.appendChild(b);
+    });
+  }
+  function seg(host, onChange) {
+    $$("button", host).forEach(function (b) {
+      b.type = "button";
+      b.addEventListener("click", function () {
+        $$("button", host).forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        onChange(b.getAttribute("data-v"));
+      });
+    });
+  }
+
+  /* =================== Flashcards =================== */
+  var fc = { cats: {}, front: "term", order: [], idx: 0, flipped: false, shuffled: false, learning: false };
+  CATS.forEach(function (c) { fc.cats[c.id] = true; });
+  function fcDeck() {
+    var d = CARDS.filter(function (c) { return fc.cats[c.cat] && (!fc.learning || !known[c.id]); });
+    return fc.shuffled ? shuffle(d) : d;
+  }
+  function fcReset() { fc.order = fcDeck(); fc.idx = 0; fc.flipped = false; fcRender(); }
+  function fcRender() {
+    var area = $("#fc-area");
+    var total = CARDS.filter(function (c) { return fc.cats[c.cat]; });
+    var got = total.filter(function (c) { return known[c.id]; }).length;
+    if (!fc.order.length) {
+      area.innerHTML = '<div class="stage"><p class="q-prompt">No cards left in this set.</p><p>You have marked every card here as “Got it”. Untick “Only cards I am still learning” to see them all again.</p></div>';
+      return;
+    }
+    if (fc.idx >= fc.order.length) fc.idx = 0;
+    var c = fc.order[fc.idx], body;
+    if (!fc.flipped) {
+      body = fc.front === "term"
+        ? '<div class="fc-body fc-front"><div class="fc-term">' + esc(c.term) + "</div></div>"
+        : '<div class="fc-body fc-front"><span class="lbl">Which term is this?</span><p class="fc-q">' + esc(c.def) + "</p></div>";
+    } else {
+      body = '<div class="fc-body fc-back"><h3>' + esc(c.term) + "</h3><p>" + esc(c.def) + "</p>" +
+        '<div><span class="lbl">Example</span>' + cardExample(c) + "</div>" +
+        '<div><span class="lbl">' + HOWLBL[c.cat] + "</span><p>" + esc(c.how) + "</p></div></div>";
+    }
+    area.innerHTML =
+      '<div class="row spread"><span class="meta">Card ' + (fc.idx + 1) + " of " + fc.order.length + '</span><span class="meta">Got it: ' + got + " of " + total.length + "</span></div>" +
+      '<div class="bar" style="margin:6px 0 12px"><i style="width:' + (total.length ? Math.round(100 * got / total.length) : 0) + '%"></i></div>' +
+      '<div class="fc" id="fc" role="button" tabindex="0" aria-label="Flashcard. Press Enter or Space to turn it over.">' +
+      '<div class="fc-top"><span class="chip cat-' + c.cat + '">' + catName[c.cat] + '</span><span class="fc-state">' + (known[c.id] ? "Got it ✓" : "") + "</span></div>" +
+      body + '<div class="fc-hint">' + (fc.flipped ? "Tap to see the front" : "Tap to turn over") + "</div></div>" +
+      '<div class="row spread" style="margin-top:12px"><div class="row"><button class="btn" id="fc-prev" type="button">← Previous</button><button class="btn" id="fc-next" type="button">Next →</button></div>' +
+      '<div class="row"><button class="btn" id="fc-again" type="button">Still learning</button><button class="btn ok" id="fc-got" type="button">Got it</button></div></div>' +
+      '<div class="row"><button class="btn quiet" id="fc-clear" type="button">Clear my “Got it” marks</button></div>';
+    var el = $("#fc");
+    el.addEventListener("click", function () { fc.flipped = !fc.flipped; fcRender(); $("#fc").focus(); });
+    el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fc.flipped = !fc.flipped; fcRender(); $("#fc").focus(); } });
+    $("#fc-prev").addEventListener("click", function () { fcMove(-1); });
+    $("#fc-next").addEventListener("click", function () { fcMove(1); });
+    $("#fc-got").addEventListener("click", function () { known[c.id] = true; save(); fcAfterMark(); });
+    $("#fc-again").addEventListener("click", function () { delete known[c.id]; save(); fcMove(1); });
+    $("#fc-clear").addEventListener("click", function () { known = {}; save(); fcReset(); });
+  }
+  function fcMove(d) { fc.idx = (fc.idx + d + fc.order.length) % fc.order.length; fc.flipped = false; fcRender(); }
+  function fcAfterMark() {
+    if (fc.learning) { fc.order.splice(fc.idx, 1); fc.flipped = false; if (fc.idx >= fc.order.length) fc.idx = 0; fcRender(); }
+    else fcMove(1);
+  }
+  function fcInit() {
+    chips($("#fc-cats"), CATS.map(function (c) { return { id: c.id, label: c.name, cls: "cat-" + c.id }; }), fc.cats, fcReset);
+    seg($("#fc-front"), function (v) { fc.front = v; fc.flipped = false; fcRender(); });
+    $("#fc-shuffle").addEventListener("click", function () { fc.shuffled = true; fcReset(); });
+    $("#fc-learning").addEventListener("change", function (e) { fc.learning = e.target.checked; fcReset(); });
+    fcReset();
+  }
+
+  /* =================== Quiz engine =================== */
+  function sample(pool, n) {
+    /* pool: array of items, or array of groups (arrays) to draw from evenly */
+    if (pool.length && Array.isArray(pool[0])) {
+      var groups = pool.map(shuffle).filter(function (g) { return g.length; }), out = [], i = 0;
+      var total = groups.reduce(function (a, g) { return a + g.length; }, 0);
+      n = Math.min(n, total);
+      while (out.length < n) { var g = groups[i % groups.length]; if (g.length) out.push(g.pop()); i++; }
+      return shuffle(out);
+    }
+    return shuffle(pool).slice(0, n);
+  }
+  function Quiz(panel, cfg) {
+    var self = this;
+    this.panel = panel; this.cfg = cfg; this.stage = $(".stage", panel); this.len = 10;
+    this.items = []; this.idx = 0; this.score = 0; this.answered = false; this.missed = [];
+    var controls = $(".controls", panel);
+    (cfg.filters || []).forEach(function (f) {
+      var row = document.createElement("div"); row.className = "ctl";
+      row.innerHTML = '<span class="ctl-label">' + esc(f.label) + "</span>";
+      if (f.type === "chips") chips(row, f.options, f.state, function () { self.start(); });
+      if (f.type === "seg") {
+        var s = document.createElement("span"); s.className = "seg";
+        s.innerHTML = f.options.map(function (o) { return '<button data-v="' + o.id + '" aria-pressed="' + (f.state.v === o.id) + '">' + esc(o.label) + "</button>"; }).join("");
+        row.appendChild(s); seg(s, function (v) { f.state.v = v; self.start(); });
+      }
+      if (f.type === "select") {
+        var sel = document.createElement("select"); sel.id = panel.id + "-" + f.key; sel.setAttribute("aria-label", f.label);
+        sel.innerHTML = f.options.map(function (o) { return '<option value="' + o.id + '">' + esc(o.label) + "</option>"; }).join("");
+        sel.addEventListener("change", function () { f.state.v = sel.value; self.start(); });
+        row.appendChild(sel);
+      }
+      controls.appendChild(row);
+    });
+    var lr = document.createElement("div"); lr.className = "ctl";
+    lr.innerHTML = '<span class="ctl-label">Round</span><span class="seg"><button data-v="10" aria-pressed="true">10 questions</button><button data-v="20" aria-pressed="false">20</button><button data-v="999" aria-pressed="false">All</button></span>';
+    controls.appendChild(lr);
+    seg($(".seg", lr), function (v) { self.len = +v; self.start(); });
+    this.start();
+  }
+  Quiz.prototype.start = function (retry) {
+    var raw = retry || sample(this.cfg.build(), this.len);
+    this.items = raw.map(this.cfg.make);
+    this.raw = raw; this.idx = 0; this.score = 0; this.missed = []; this.answered = false;
+    this.render();
+  };
+  Quiz.prototype.render = function () {
+    var self = this, st = this.stage;
+    if (!this.items.length) { st.innerHTML = "<p>No questions match this selection.</p>"; return; }
+    if (this.idx >= this.items.length) return this.summary();
+    var q = this.items[this.idx];
+    st.innerHTML =
+      '<div class="row spread"><span class="meta">Question ' + (this.idx + 1) + " of " + this.items.length + '</span><span class="meta">Score ' + this.score + "</span></div>" +
+      '<div class="bar"><i style="width:' + Math.round(100 * this.idx / this.items.length) + '%"></i></div>' +
+      (q.kicker || "") + (q.body || "") +
+      '<p class="q-prompt">' + q.prompt + "</p>" +
+      '<div class="opts">' + q.options.map(function (o, i) {
+        return '<button type="button" class="opt" data-i="' + i + '"><span class="key">' + KEYS[i] + '</span><span class="txt"><span>' + o.html + "</span></span></button>";
+      }).join("") + "</div>" +
+      '<div class="fb" hidden></div><div class="row"><button type="button" class="btn primary next" hidden>' + (this.idx + 1 === this.items.length ? "See results" : "Next question") + "</button></div>";
+    this.answered = false;
+    $$(".opt", st).forEach(function (b) { b.addEventListener("click", function () { self.answer(+b.getAttribute("data-i")); }); });
+    $(".next", st).addEventListener("click", function () { self.idx++; self.render(); self.stage.scrollIntoView({ block: "nearest" }); });
+  };
+  Quiz.prototype.answer = function (i) {
+    if (this.answered) return;
+    this.answered = true;
+    var q = this.items[this.idx], st = this.stage, chosen = q.options[i], right = !!chosen.ok;
+    if (right) this.score++; else this.missed.push(this.idx);
+    $$(".opt", st).forEach(function (b, k) {
+      var o = q.options[k]; b.disabled = true;
+      if (o.ok) b.classList.add("is-ok"); else if (k === i) b.classList.add("is-no"); else b.classList.add("is-dim");
+      var tag = o.ok ? (q.tagged ? "Best answer" : "") : (o.tag || "");
+      if (tag && (q.tagged || k === i || o.ok)) $(".txt", b).insertAdjacentHTML("afterbegin", '<span class="tag">' + esc(tag) + "</span>");
+    });
+    var fb = $(".fb", st);
+    fb.className = "fb " + (right ? "ok" : "no");
+    fb.innerHTML = '<p class="fb-head">' + (right ? "Correct." : "Not quite.") + "</p>" + (!right && chosen.note ? "<p>" + esc(chosen.note) + "</p>" : "") + (q.explain || "");
+    fb.hidden = false;
+    var n = $(".next", st); n.hidden = false; n.focus({ preventScroll: true });
+    fb.scrollIntoView({ block: "nearest" });
+  };
+  Quiz.prototype.summary = function () {
+    var self = this, n = this.items.length;
+    var missed = this.missed.map(function (k) {
+      var q = self.items[k], ok = q.options.filter(function (o) { return o.ok; })[0];
+      return '<li><span class="mq">' + q.review + "</span><span><strong>Answer:</strong> " + ok.html + "</span></li>";
+    }).join("");
+    this.stage.innerHTML =
+      '<p class="eyebrow">Round complete</p><p class="score">' + this.score + " out of " + n + "</p>" +
+      (missed ? '<h3>To revisit</h3><ul class="missed">' + missed + "</ul>" : "<p>Every answer correct.</p>") +
+      '<div class="row"><button type="button" class="btn primary again">New round</button>' + (missed ? '<button type="button" class="btn retry">Retry the ones I missed</button>' : "") + "</div>";
+    $(".again", this.stage).addEventListener("click", function () { self.start(); });
+    var r = $(".retry", this.stage);
+    if (r) r.addEventListener("click", function () { self.start(self.missed.map(function (k) { return self.raw[k]; })); });
+  };
+  Quiz.prototype.key = function (e) {
+    if (this.answered || this.idx >= this.items.length) return;
+    var k = e.key.toUpperCase(), i = KEYS.indexOf(k);
+    if (i < 0 && /^[1-4]$/.test(k)) i = +k - 1;
+    if (i >= 0 && i < this.items[this.idx].options.length) { e.preventDefault(); this.answer(i); }
+  };
+
+  /* ---- helpers for building options ---- */
+  function termOpts(answerId, wrongIds) {
+    return shuffle([{ html: esc(byId[answerId].term), ok: true }].concat(wrongIds.map(function (id) { return { html: esc(byId[id].term) }; })));
+  }
+  function defLine(c) { return "<p><strong>" + esc(c.term) + ":</strong> " + esc(c.def) + "</p>"; }
+  function nearMisses(c) {
+    var ok = function (o) { return o.id !== c.id && (c.avoid || []).indexOf(o.id) < 0 && (o.avoid || []).indexOf(c.id) < 0; };
+    var same = shuffle(CARDS.filter(function (o) { return o.cat === c.cat && ok(o); }));
+    var rest = shuffle(CARDS.filter(function (o) { return o.cat !== c.cat && ok(o); }));
+    return same.concat(rest).slice(0, 3);
+  }
+  function catChips(ids) {
+    var st = {}; ids.forEach(function (id) { st[id] = true; });
+    return { type: "chips", label: "Include", state: st, options: ids.map(function (id) { return { id: id, label: catName[id], cls: "cat-" + id }; }) };
+  }
+  function textSelect() {
+    var keys = Object.keys(TEXTS);
+    return { type: "select", key: "text", label: "Text", state: { v: "all" }, options: [{ id: "all", label: "All nine texts" }].concat(keys.map(function (k) { return { id: k, label: SRC[k].short }; })) };
+  }
+  function modeChips(modes) {
+    var st = {}; modes.forEach(function (m) { st[m.id] = true; });
+    return { type: "chips", label: "Include", state: st, options: modes };
+  }
+
+  /* =================== Definitions =================== */
+  var defCats = catChips(["lang", "appeal", "evid", "struct", "tone", "form"]);
+  var defDir = { type: "seg", label: "Ask for", state: { v: "mix" }, options: [{ id: "mix", label: "Mixed" }, { id: "d2t", label: "The term" }, { id: "t2d", label: "The definition" }] };
+  var defCfg = {
+    filters: [defCats, defDir],
+    build: function () { return CARDS.filter(function (c) { return defCats.state[c.cat]; }); },
+    make: function (c) {
+      var dir = defDir.state.v === "mix" ? (Math.random() < 0.5 ? "d2t" : "t2d") : defDir.state.v;
+      var wrong = nearMisses(c), opts, prompt, body = "";
+      if (dir === "d2t") {
+        prompt = c.cat === "tone" ? "Which tone word matches this description?" : c.cat === "form" ? "Which text type matches this description?" : "Which term matches this definition?";
+        body = clip(esc(c.def), "", true);
+        opts = shuffle([{ html: esc(c.term), ok: true }].concat(wrong.map(function (w) { return { html: esc(w.term) }; })));
+      } else {
+        prompt = "Which definition matches “" + esc(c.term) + "”?";
+        opts = shuffle([{ html: esc(c.def), ok: true }].concat(wrong.map(function (w) { return { html: esc(w.def) }; })));
+      }
+      return { prompt: prompt, body: body, options: opts,
+        explain: defLine(c) + '<div><span class="lbl">Example</span>' + cardExample(c) + "</div>",
+        review: dir === "d2t" ? esc(c.def) : "Definition of “" + esc(c.term) + "”" };
+    }
+  };
+
+  /* =================== Spot the device =================== */
+  var spotCats = catChips(["lang", "appeal", "evid", "struct"]);
+  function makeSpot(s) {
+    var a = byId[s.a];
+    return { prompt: esc(s.q || "Which technique is most clearly at work in these words?"),
+      body: clip(fmt(s.text), cite(s.src), s.src === "note"),
+      options: termOpts(s.a, s.d),
+      explain: "<p>" + esc(s.why) + "</p>" + defLine(a),
+      review: plain(s.text) };
+  }
+  var spotCfg = {
+    filters: [spotCats],
+    build: function () { return SPOT.filter(function (s) { return s.cat !== "tone" && spotCats.state[s.cat]; }); },
+    make: makeSpot
+  };
+
+  /* =================== Effect on the audience =================== */
+  var FLAW = {
+    general: ["Too general", "This could be said about almost any text. Name the thought or feeling, and say why this audience would have it."],
+    over: ["Overstated", "Words cannot force anyone to do anything. Use verbs such as “invites”, “encourages” or “positions”."],
+    wrong: ["Wrong effect", "This does not fit the words or the writer’s purpose. Check the tone and the main point of view again."],
+    desc: ["Describes only", "This says what the text contains. Analysis explains what it is meant to do to the audience."],
+    obvious: ["States the obvious", "This only repeats the name of the technique. Explain what these particular words do."],
+    aud: ["Wrong audience", "This names the wrong audience or the wrong point of view for this text."]
+  };
+  var effText = textSelect();
+  var effKind = { type: "seg", label: "Show", state: { v: "all" }, options: [{ id: "all", label: "Words and images" }, { id: "w", label: "Words" }, { id: "v", label: "Images" }] };
+  var effCfg = {
+    filters: [effText, effKind],
+    build: function () {
+      return EFFECT.filter(function (e) {
+        return (effText.state.v === "all" || e.src === effText.state.v) && (effKind.state.v === "all" || (effKind.state.v === "v") === !!e.visual);
+      });
+    },
+    make: function (e) {
+      var s = SRC[e.src];
+      return { tagged: true,
+        kicker: '<p class="aud"><span class="lbl">Audience</span>' + esc(s.aud) + "</p>",
+        body: clip(fmt(e.text), cite(e.src), !!e.visual),
+        prompt: e.visual ? "What is this image most likely meant to do for this audience?" : "What is the most likely intended effect on this audience?",
+        options: shuffle(e.opts.map(function (o) { return o.ok ? { html: esc(o.t), ok: true } : { html: esc(o.t), tag: FLAW[o.f][0], note: FLAW[o.f][1] }; })),
+        explain: '<p><span class="lbl">Terms to use in your analysis</span>' + e.dev.map(function (d) { return esc(byId[d].term); }).join(", ") + "</p>",
+        review: plain(e.text) };
+    }
+  };
+
+  /* =================== CDFASTCATP =================== */
+  var NEAR = { context: ["contention", "purpose"], date: ["source", "title"], form: ["source", "title"], author: ["source", "audience"], source: ["author", "form"],
+    title: ["contention", "form"], contention: ["purpose", "context", "title"], audience: ["author", "purpose"], tone: ["purpose", "form"], purpose: ["contention", "tone"] };
+  function elOpts(id) {
+    var wrong = shuffle(NEAR[id]).slice(0, 2);
+    var rest = shuffle(ELEMENTS.map(function (e) { return e.id; }).filter(function (x) { return x !== id && wrong.indexOf(x) < 0; }));
+    wrong = wrong.concat(rest.slice(0, 3 - wrong.length));
+    return shuffle([{ html: elName[id], ok: true }].concat(wrong.map(function (w) { return { html: elName[w] }; })));
+  }
+  function elExplain(id) { var e = ELEMENTS.filter(function (x) { return x.id === id; })[0]; return "<p><strong>" + e.name + ":</strong> " + esc(e.ask) + "</p>"; }
+  var introModes = modeChips([{ id: "ask", label: "What each part asks" }, { id: "detail", label: "Spot the detail" }, { id: "intro", label: "In an introduction" }]);
+  var introCfg = {
+    filters: [introModes],
+    build: function () {
+      var groups = [];
+      if (introModes.state.ask) groups.push(ELEMENTS.map(function (e) { return { k: "ask", el: e.id }; }));
+      if (introModes.state.detail) {
+        var g = [];
+        Object.keys(TEXTS).forEach(function (t) { ELEMENTS.forEach(function (e) { g.push({ k: "detail", el: e.id, t: t }); }); });
+        groups.push(g);
+      }
+      if (introModes.state.intro) {
+        var h = [];
+        INTROS.forEach(function (it, n) { it.parts.forEach(function (p, i) { if (p[1]) h.push({ k: "intro", el: p[1], n: n, i: i }); }); });
+        groups.push(h);
+      }
+      return groups;
+    },
+    make: function (x) {
+      var e = ELEMENTS.filter(function (y) { return y.id === x.el; })[0];
+      if (x.k === "ask") return { prompt: "Which part of CDFASTCATP answers this question?", body: clip(esc(e.ask), "", true), options: elOpts(x.el), explain: elExplain(x.el), review: esc(e.ask) };
+      if (x.k === "detail") {
+        var val = x.el === "title" ? "“" + SRC[x.t].title + "”" : TEXTS[x.t][x.el];
+        return { prompt: "Which part of CDFASTCATP is this detail?", body: clip(esc(val), "About: " + esc(SRC[x.t].who) + ", “" + esc(SRC[x.t].title) + "”", true),
+          options: elOpts(x.el), explain: elExplain(x.el), review: esc(val) };
+      }
+      var it = INTROS[x.n];
+      var html = it.parts.map(function (p, i) { return i === x.i ? "<mark>" + esc(p[0]) + "</mark>" : esc(p[0]); }).join("");
+      return { prompt: "Which part of CDFASTCATP is highlighted?", body: clip(html, esc(it.label), true), options: elOpts(x.el), explain: elExplain(x.el), review: "“" + esc(it.parts[x.i][0]) + "”" };
+    }
+  };
+
+  /* =================== Text type =================== */
+  var typeCfg = {
+    build: function () { return TYPEQ.map(function (q) { return { k: "t", q: q }; }).concat(TYPEWHY.map(function (q) { return { k: "w", q: q }; })); },
+    make: function (x) {
+      var q = x.q;
+      if (x.k === "t") return { prompt: esc(q.q || Q_TYPE), body: clip(fmt(q.text), cite(q.src), q.src === "note"), options: termOpts(q.a, q.d),
+        explain: "<p>" + esc(q.why) + "</p>" + defLine(byId[q.a]), review: plain(q.text) };
+      return { prompt: esc(q.q), body: clip(fmt(q.text), cite(q.src)),
+        options: shuffle(q.opts.map(function (t, i) { return { html: esc(t), ok: i === 0 }; })), explain: "<p>" + esc(q.why) + "</p>", review: esc(q.q) };
+    }
+  };
+
+  /* =================== Values =================== */
+  var valKind = { type: "seg", label: "Show", state: { v: "all" }, options: [{ id: "all", label: "Everything" }, { id: "b", label: "Beliefs" }, { id: "x", label: "Lines from the texts" }] };
+  var valCfg = {
+    filters: [valKind],
+    build: function () { return VALUESQ.filter(function (v) { return valKind.state.v === "all" || (valKind.state.v === "b") === (v.src === "note"); }); },
+    make: function (v) {
+      return { prompt: esc(v.q), body: clip(fmt(v.text), cite(v.src), v.src === "note"),
+        options: ["p", "c", "b"].map(function (k) { return { html: esc(VALUE_OPTS[k]), ok: v.a === k }; }),
+        explain: "<p>" + esc(v.why) + "</p>", review: plain(v.text) };
+    }
+  };
+
+  /* =================== Tone =================== */
+  var toneModes = modeChips([{ id: "name", label: "Name the tone" }, { id: "words", label: "Find the words" }, { id: "group", label: "Word groups" }]);
+  var toneCfg = {
+    filters: [toneModes],
+    build: function () {
+      var g = [];
+      if (toneModes.state.name) g.push(SPOT.filter(function (s) { return s.cat === "tone"; }).map(function (s) { return { k: "n", q: s }; }));
+      if (toneModes.state.words) g.push(TONEW.map(function (s) { return { k: "w", q: s }; }));
+      if (toneModes.state.group) g.push(TONEC.map(function (s) { return { k: "g", q: s }; }));
+      return g;
+    },
+    make: function (x) {
+      var q = x.q;
+      if (x.k === "n") return makeSpot(q);
+      if (x.k === "w") {
+        var t = byId[q.tone];
+        return { prompt: "Which words do most to create the " + esc(t.term.toLowerCase()) + " tone?", body: clip(esc(q.text), cite(q.src)),
+          options: shuffle([{ html: "“" + esc(q.a) + "”", ok: true }].concat(q.d.map(function (d) { return { html: "“" + esc(d) + "”" }; }))),
+          explain: "<p>" + esc(q.why) + "</p>" + defLine(t), review: esc(q.text) };
+      }
+      return { prompt: "Which tone do these word choices create?",
+        body: '<figure class="clip"><div class="words">' + q.words.map(function (w) { return "<span>" + esc(w) + "</span>"; }).join("") + "</div><figcaption>Words from: " + cite(q.src) + "</figcaption></figure>",
+        options: termOpts(q.a, q.d), explain: "<p>" + esc(q.why) + "</p>" + defLine(byId[q.a]), review: esc(q.words.join(" · ")) };
+    }
+  };
+
+  /* =================== Tabs =================== */
+  var TABS = ["flashcards", "definitions", "spot", "effect", "intro", "type", "values", "tone", "guide"];
+  var quizCfg = { definitions: defCfg, spot: spotCfg, effect: effCfg, intro: introCfg, type: typeCfg, values: valCfg, tone: toneCfg };
+  var quizzes = {}, current = "flashcards";
+  function show(tab, focus) {
+    if (TABS.indexOf(tab) < 0) tab = "flashcards";
+    current = tab;
+    TABS.forEach(function (t) { $("#p-" + t).hidden = t !== tab; });
+    $$(".tab").forEach(function (b) { b.setAttribute("aria-selected", b.getAttribute("data-tab") === tab ? "true" : "false"); });
+    if (quizCfg[tab] && !quizzes[tab]) quizzes[tab] = new Quiz($("#p-" + tab), quizCfg[tab]);
+    save();
+    if (focus) { try { history.replaceState(null, "", "#" + tab); } catch (e) {} }
+  }
+  function letters(host) {
+    host.innerHTML = ELEMENTS.map(function (e) { return '<li><b class="l">' + e.letter + "</b><span><b>" + e.name + "</b>" + esc(e.ask) + "</span></li>"; }).join("");
+  }
+  function start() {
+    letters($("#letters-a")); letters($("#letters-b"));
+    fcInit();
+    $$(".tab").forEach(function (b) { b.addEventListener("click", function () { show(b.getAttribute("data-tab"), true); }); });
+    document.addEventListener("keydown", function (e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      var tag = (e.target.tagName || "").toLowerCase();
+      if (tag === "select" || tag === "input" || tag === "textarea") return;
+      if (quizzes[current]) quizzes[current].key(e);
+      else if (current === "flashcards" && fc.order.length) {
+        if (e.key === "ArrowRight") fcMove(1);
+        if (e.key === "ArrowLeft") fcMove(-1);
+      }
+    });
+    var h = (location.hash || "").replace("#", "");
+    show(TABS.indexOf(h) >= 0 ? h : "flashcards");
+    window.addEventListener("hashchange", function () { var x = (location.hash || "").replace("#", ""); if (TABS.indexOf(x) >= 0) show(x); });
+  }
+  start();
+})();
+</script>
+</body>
+</html>
